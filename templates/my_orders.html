@@ -1,0 +1,657 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Orders | ShopEase{% endblock %}
+
+{% block content %}
+
+<section class="orders-page">
+
+    <!-- Header -->
+    <div class="orders-header">
+
+        <span class="eyebrow">
+            SHOPEASE
+        </span>
+
+        <h1>My Orders</h1>
+
+        <p>
+            Track and manage your recent orders.
+        </p>
+
+    </div>
+
+
+    {% if orders %}
+
+    <!-- Orders -->
+    <div class="orders-container">
+
+        {% for order in orders %}
+
+        <div class="order-card">
+
+            <!-- Top -->
+            <div class="order-top">
+
+                <div>
+
+                    <span class="order-label">
+                        ORDER ID
+                    </span>
+
+                    <h2>
+                        #{{ order.id }}
+                    </h2>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="order-status
+                    {% if order.status == 'Pending' %}
+                        pending
+                    {% elif order.status == 'Confirmed' %}
+                        confirmed
+                    {% elif order.status == 'Shipped' %}
+                        shipped
+                    {% elif order.status == 'Delivered' %}
+                        delivered
+                    {% elif order.status == 'Cancelled' %}
+                        cancelled
+                    {% endif %}
+                ">
+
+                    {{ order.status }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Order Details -->
+
+            <div class="order-details">
+
+                <div class="detail-item">
+
+                    <span>
+                        📅 Date
+                    </span>
+
+                    <strong>
+                        {{ order.created_at|date:"d M Y" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        🕒 Time
+                    </span>
+
+                    <strong>
+                        {{ order.created_at|date:"h:i A" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span>
+                        💰 Total
+                    </span>
+
+                    <strong>
+                        ₹{{ order.total_amount }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- Address -->
+
+            <div class="order-address">
+
+                <span>
+                    📍 Delivery Address
+                </span>
+
+                <p>
+                    {{ order.address }},
+                    {{ order.city }} -
+                    {{ order.pincode }}
+                </p>
+
+            </div>
+
+
+            <!-- Button -->
+
+            <div class="order-footer">
+
+                <a
+                    href="{% url 'order_detail' order.id %}"
+                    class="view-order-btn"
+                >
+                    View Order Details →
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Continue Shopping -->
+
+    <div class="orders-shopping">
+
+        <a href="{% url 'products' %}">
+            ← Continue Shopping
+        </a>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- Empty Orders -->
+
+    <div class="empty-orders">
+
+        <div class="empty-orders-icon">
+            📦
+        </div>
+
+        <h2>
+            No Orders Yet
+        </h2>
+
+        <p>
+            You haven't placed any orders yet.
+            Start shopping and your orders will appear here.
+        </p>
+
+        <a
+            href="{% url 'products' %}"
+            class="shop-now-btn"
+        >
+            Start Shopping →
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* =========================
+   PAGE
+========================= */
+
+.orders-page {
+    min-height: 80vh;
+    padding: 70px 6%;
+}
+
+
+.orders-header {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+
+.eyebrow {
+    font-size: 12px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+
+.orders-header h1 {
+    font-size: 42px;
+    margin: 10px 0;
+}
+
+
+.orders-header p {
+    color: #777;
+}
+
+
+/* =========================
+   CONTAINER
+========================= */
+
+.orders-container {
+    max-width: 1000px;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+/* =========================
+   ORDER CARD
+========================= */
+
+.order-card {
+    background: white;
+
+    padding: 28px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+    transition: 0.3s ease;
+}
+
+
+.order-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.09);
+}
+
+
+/* =========================
+   TOP
+========================= */
+
+.order-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.order-label {
+    color: #999;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+}
+
+
+.order-top h2 {
+    margin: 5px 0 0;
+
+    font-size: 23px;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.order-status {
+    padding: 8px 15px;
+
+    border-radius: 30px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* Pending */
+
+.order-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+
+/* Confirmed */
+
+.order-status.confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+
+/* Shipped */
+
+.order-status.shipped {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+
+/* Delivered */
+
+.order-status.delivered {
+    background: #dcfce7;
+    color: #166534;
+}
+
+
+/* Cancelled */
+
+.order-status.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+
+/* =========================
+   DETAILS
+========================= */
+
+.order-details {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    padding: 22px 0;
+}
+
+
+.detail-item {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.detail-item span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+.detail-item strong {
+    font-size: 16px;
+}
+
+
+/* =========================
+   ADDRESS
+========================= */
+
+.order-address {
+    padding: 18px;
+
+    background: #f8f8f8;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+}
+
+
+.order-address span {
+    color: #777;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.order-address p {
+    margin: 8px 0 0;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    word-break: break-word;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.order-footer {
+    display: flex;
+
+    justify-content: flex-end;
+}
+
+
+.view-order-btn {
+    display: inline-block;
+
+    padding: 12px 20px;
+
+    background: #111;
+
+    color: white;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+
+.view-order-btn:hover {
+    background: #333;
+
+    color: white;
+
+    transform: translateX(2px);
+}
+
+
+/* =========================
+   SHOPPING
+========================= */
+
+.orders-shopping {
+    max-width: 1000px;
+
+    margin: 25px auto 0;
+}
+
+
+.orders-shopping a {
+    color: #111;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+
+.orders-shopping a:hover {
+    color: #555;
+}
+
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty-orders {
+    max-width: 600px;
+
+    margin: 60px auto;
+
+    padding: 60px 30px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.07);
+}
+
+
+.empty-orders-icon {
+    font-size: 55px;
+
+    margin-bottom: 15px;
+}
+
+
+.empty-orders h2 {
+    font-size: 28px;
+}
+
+
+.empty-orders p {
+    color: #777;
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+}
+
+
+.shop-now-btn {
+    display: inline-block;
+
+    background: #111;
+
+    color: white;
+
+    padding: 14px 25px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+
+.shop-now-btn:hover {
+    background: #333;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .orders-page {
+        padding: 45px 20px;
+    }
+
+
+    .orders-header h1 {
+        font-size: 32px;
+    }
+
+
+    .order-card {
+        padding: 20px;
+    }
+
+
+    .order-top {
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .order-status {
+        font-size: 11px;
+
+        padding: 7px 11px;
+    }
+
+
+    .order-details {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+
+    .order-footer {
+        justify-content: stretch;
+    }
+
+
+    .view-order-btn {
+        width: 100%;
+
+        text-align: center;
+
+        box-sizing: border-box;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .order-top {
+        flex-direction: column;
+    }
+
+
+    .order-status {
+        align-self: flex-start;
+    }
+
+
+    .empty-orders {
+        padding: 45px 20px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}Login | ShopEase{% endblock %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+        background: #f7f7f7;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 1050px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+    }
+
+    /* =========================
+       LEFT SIDE
+    ========================= */
+
+    .login-left {
+        background: #111;
+        color: #fff;
+        padding: 60px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-left::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        top: -110px;
+        right: -110px;
+    }
+
+    .login-left::after {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+        bottom: -100px;
+        left: -80px;
+    }
+
+    .brand-logo {
+        font-size: 30px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 35px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .brand-logo span {
+        color: #aaa;
+    }
+
+    .login-left h1 {
+        font-size: 42px;
+        line-height: 1.15;
+        margin: 0 0 20px;
+        font-weight: 800;
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-left > p {
+        color: #bbb;
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 420px;
+        margin-bottom: 35px;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Benefits */
+
+    .benefits {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .benefit {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        color: #ddd;
+        font-size: 14px;
+    }
+
+    .benefit-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #fff;
+        color: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    /* =========================
+       RIGHT SIDE
+    ========================= */
+
+    .login-right {
+        padding: 60px 55px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .login-heading {
+        margin-bottom: 30px;
+    }
+
+    .login-heading h2 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 800;
+        color: #111;
+    }
+
+    .login-heading p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    /* =========================
+       FORM
+    ========================= */
+
+    .form-group {
+        margin-bottom: 22px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .form-group input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 11px;
+        background: #fafafa;
+        color: #111;
+        font-size: 14px;
+        outline: none;
+        transition: 0.25s;
+    }
+
+    .form-group input:focus {
+        border-color: #111;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* =========================
+       ERROR
+    ========================= */
+
+    .error-box {
+        background: #f7f7f7;
+        border-left: 4px solid #111;
+        padding: 13px 15px;
+        border-radius: 8px;
+        margin-bottom: 22px;
+        font-size: 13px;
+        color: #444;
+    }
+
+    /* =========================
+       LOGIN BUTTON
+    ========================= */
+
+    .login-btn {
+        width: 100%;
+        border: none;
+        padding: 15px;
+        border-radius: 11px;
+        background: #111;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 5px;
+    }
+
+    .login-btn:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* =========================
+       REGISTER LINK
+    ========================= */
+
+    .register-link {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 14px;
+        color: #777;
+    }
+
+    .register-link a {
+        color: #111;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 850px) {
+
+        .login-container {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+        }
+
+        .login-left {
+            padding: 45px 35px;
+        }
+
+        .login-left h1 {
+            font-size: 34px;
+        }
+
+        .login-right {
+            padding: 45px 35px;
+        }
+    }
+
+    @media (max-width: 500px) {
+
+        .login-page {
+            padding: 25px 12px;
+        }
+
+        .login-left {
+            padding: 35px 25px;
+        }
+
+        .login-right {
+            padding: 35px 25px;
+        }
+
+        .brand-logo {
+            font-size: 25px;
+        }
+
+        .login-left h1 {
+            font-size: 29px;
+        }
+
+        .login-heading h2 {
+            font-size: 25px;
+        }
+    }
+</style>
+
+
+<div class="login-page">
+
+    <div class="login-container">
+
+        <!-- =========================
+             LEFT SIDE
+        ========================== -->
+
+        <div class="login-left">
+
+            <div class="brand-logo">
+                SHOP<span>EASE</span>
+            </div>
+
+            <h1>
+                Welcome<br>
+                back to ShopEase.
+            </h1>
+
+            <p>
+                Sign in to continue shopping, manage your cart,
+                track your orders and enjoy a seamless ShopEase
+                experience.
+            </p>
+
+            <div class="benefits">
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Access your personal account
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Manage your shopping cart
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Track your orders
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Fast and simple shopping
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RIGHT SIDE
+        ========================== -->
+
+        <div class="login-right">
+
+            <div class="login-heading">
+
+                <h2>
+                    Welcome Back
+                </h2>
+
+                <p>
+                    Login to your ShopEase account.
+                </p>
+
+            </div>
+
+
+            <!-- Login Errors -->
+
+            {% if form.errors %}
+
+                <div class="error-box">
+                    Your username or password is incorrect.
+                    Please try again.
+                </div>
+
+            {% endif %}
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- Username -->
+
+                <div class="form-group">
+
+                    <label for="id_username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        id="id_username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="id_password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        id="id_password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Login Button -->
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+                    Login to ShopEase
+                </button>
+
+            </form>
+
+
+            <!-- Register -->
+
+            <div class="register-link">
+
+                Don't have an account?
+
+                <a href="{% url 'register' %}">
+                    Create Account
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,948 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} | ShopEase{% endblock %}
+
+{% block content %}
+
+<section class="order-detail-page">
+
+    <!-- Header -->
+    <div class="order-detail-header">
+
+        <span class="eyebrow">
+            SHOPEASE
+        </span>
+
+        <h1>
+            Order #{{ order.id }}
+        </h1>
+
+        <p>
+            Placed on {{ order.created_at|date:"d M Y, h:i A" }}
+        </p>
+
+    </div>
+
+
+    <!-- Tracking -->
+
+    <div class="tracking-card">
+
+        <h2>Order Tracking</h2>
+
+        <div class="tracking">
+
+            <!-- Pending -->
+
+            <div class="tracking-step
+                {% if order.status == 'Pending' or order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}
+                    active
+                {% endif %}
+            ">
+
+                <div class="tracking-circle">
+
+                    {% if order.status == 'Pending' or order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        1
+                    {% endif %}
+
+                </div>
+
+                <div class="tracking-info">
+
+                    <strong>
+                        Order Placed
+                    </strong>
+
+                    <span>
+                        Order received successfully
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="tracking-line"></div>
+
+
+            <!-- Confirmed -->
+
+            <div class="tracking-step
+                {% if order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}
+                    active
+                {% endif %}
+            ">
+
+                <div class="tracking-circle">
+
+                    {% if order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        2
+                    {% endif %}
+
+                </div>
+
+                <div class="tracking-info">
+
+                    <strong>
+                        Confirmed
+                    </strong>
+
+                    <span>
+                        Order is being prepared
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="tracking-line"></div>
+
+
+            <!-- Shipped -->
+
+            <div class="tracking-step
+                {% if order.status == 'Shipped' or order.status == 'Delivered' %}
+                    active
+                {% endif %}
+            ">
+
+                <div class="tracking-circle">
+
+                    {% if order.status == 'Shipped' or order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        3
+                    {% endif %}
+
+                </div>
+
+                <div class="tracking-info">
+
+                    <strong>
+                        Shipped
+                    </strong>
+
+                    <span>
+                        Package is on the way
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="tracking-line"></div>
+
+
+            <!-- Delivered -->
+
+            <div class="tracking-step
+                {% if order.status == 'Delivered' %}
+                    active
+                {% endif %}
+            ">
+
+                <div class="tracking-circle">
+
+                    {% if order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        4
+                    {% endif %}
+
+                </div>
+
+                <div class="tracking-info">
+
+                    <strong>
+                        Delivered
+                    </strong>
+
+                    <span>
+                        Order delivered successfully
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Main Layout -->
+
+    <div class="order-detail-layout">
+
+
+        <!-- Products -->
+
+        <div class="products-card">
+
+            <div class="card-title">
+
+                <h2>
+                    Ordered Products
+                </h2>
+
+                <span>
+                    {{ items|length }}
+                    item{{ items|length|pluralize }}
+                </span>
+
+            </div>
+
+
+            {% for item in items %}
+
+            <div class="ordered-product">
+
+                <div class="product-image">
+
+                    {% if item.product.image %}
+
+                        <img
+                            src="{{ item.product.image.url }}"
+                            alt="{{ item.product.name }}"
+                        >
+
+                    {% else %}
+
+                        <span>
+                            No Image
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="product-info">
+
+                    <span class="product-category">
+                        {{ item.product.category.name }}
+                    </span>
+
+                    <h3>
+                        {{ item.product.name }}
+                    </h3>
+
+                    <p>
+                        Quantity: {{ item.quantity }}
+                    </p>
+
+                </div>
+
+
+                <div class="product-price">
+
+                    <span>
+                        ₹{{ item.price }} × {{ item.quantity }}
+                    </span>
+
+                    <strong>
+                        ₹{{ item.subtotal }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- Total -->
+
+            <div class="order-total">
+
+                <span>
+                    Total Amount
+                </span>
+
+                <strong>
+                    ₹{{ order.total_amount }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Delivery -->
+
+        <div class="delivery-card">
+
+            <h2>
+                Delivery Information
+            </h2>
+
+
+            <div class="delivery-info">
+
+                <span>
+                    📞 Phone Number
+                </span>
+
+                <strong>
+                    {{ order.phone }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-info">
+
+                <span>
+                    📍 Address
+                </span>
+
+                <strong>
+                    {{ order.address }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-info">
+
+                <span>
+                    🏙️ City
+                </span>
+
+                <strong>
+                    {{ order.city }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-info">
+
+                <span>
+                    📮 Pincode
+                </span>
+
+                <strong>
+                    {{ order.pincode }}
+                </strong>
+
+            </div>
+
+
+            <div class="current-status">
+
+                <span>
+                    Current Status
+                </span>
+
+                <strong>
+                    {{ order.status }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Buttons -->
+
+    <div class="order-actions">
+
+        <a
+            href="{% url 'my_orders' %}"
+            class="secondary-btn"
+        >
+            ← My Orders
+        </a>
+
+        <a
+            href="{% url 'products' %}"
+            class="primary-btn"
+        >
+            Continue Shopping →
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* =========================
+   PAGE
+========================= */
+
+.order-detail-page {
+    min-height: 80vh;
+    padding: 65px 6%;
+}
+
+
+.order-detail-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+
+.eyebrow {
+    font-size: 12px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+
+.order-detail-header h1 {
+    font-size: 40px;
+    margin: 10px 0;
+}
+
+
+.order-detail-header p {
+    color: #777;
+}
+
+
+/* =========================
+   TRACKING
+========================= */
+
+.tracking-card {
+    max-width: 1100px;
+
+    margin: 0 auto 30px;
+
+    padding: 30px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+
+.tracking-card h2 {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+
+.tracking {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: center;
+}
+
+
+.tracking-step {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    min-width: 150px;
+}
+
+
+.tracking-circle {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #eee;
+
+    color: #777;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: 700;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.tracking-step.active .tracking-circle {
+    background: #111;
+    color: white;
+}
+
+
+.tracking-info {
+    margin-top: 12px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.tracking-info strong {
+    font-size: 14px;
+}
+
+
+.tracking-info span {
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+.tracking-line {
+    height: 2px;
+
+    background: #ddd;
+
+    flex: 1;
+
+    margin-top: 21px;
+
+    min-width: 50px;
+}
+
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.order-detail-layout {
+    max-width: 1100px;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns: 1fr 350px;
+
+    gap: 25px;
+}
+
+
+/* =========================
+   CARDS
+========================= */
+
+.products-card,
+.delivery-card {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+
+    height: fit-content;
+}
+
+
+.card-title {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.card-title h2 {
+    margin: 0;
+}
+
+
+.card-title span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   PRODUCT
+========================= */
+
+.ordered-product {
+    display: grid;
+
+    grid-template-columns: 85px 1fr auto;
+
+    gap: 18px;
+
+    align-items: center;
+
+    padding: 20px 0;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.product-image {
+    width: 85px;
+    height: 85px;
+
+    border-radius: 10px;
+
+    background: #f5f5f5;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+.product-category {
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    color: #999;
+
+    text-transform: uppercase;
+}
+
+
+.product-info h3 {
+    margin: 5px 0;
+
+    font-size: 17px;
+}
+
+
+.product-info p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+.product-price {
+    text-align: right;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.product-price span {
+    color: #888;
+
+    font-size: 12px;
+}
+
+
+.product-price strong {
+    font-size: 17px;
+}
+
+
+/* =========================
+   TOTAL
+========================= */
+
+.order-total {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding-top: 25px;
+
+    font-size: 20px;
+}
+
+
+.order-total strong {
+    font-size: 24px;
+}
+
+
+/* =========================
+   DELIVERY
+========================= */
+
+.delivery-card h2 {
+    margin-top: 0;
+
+    margin-bottom: 25px;
+}
+
+
+.delivery-info {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.delivery-info span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+.delivery-info strong {
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+
+.current-status {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #f5f5f5;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+.current-status span {
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+.current-status strong {
+    font-size: 13px;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.order-actions {
+    max-width: 1100px;
+
+    margin: 25px auto 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.primary-btn,
+.secondary-btn {
+    padding: 13px 22px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+
+.primary-btn {
+    background: #111;
+
+    color: white;
+}
+
+
+.primary-btn:hover {
+    background: #333;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+
+.secondary-btn {
+    border: 1px solid #111;
+
+    color: #111;
+
+    background: white;
+}
+
+
+.secondary-btn:hover {
+    background: #f5f5f5;
+
+    color: #111;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .order-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .order-detail-page {
+        padding: 45px 20px;
+    }
+
+
+    .order-detail-header h1 {
+        font-size: 31px;
+    }
+
+
+    .tracking-card {
+        padding: 22px 15px;
+
+        overflow-x: auto;
+    }
+
+
+    .tracking {
+        min-width: 650px;
+    }
+
+
+    .ordered-product {
+        grid-template-columns: 70px 1fr;
+    }
+
+
+    .product-image {
+        width: 70px;
+        height: 70px;
+    }
+
+
+    .product-price {
+        grid-column: 2;
+
+        text-align: left;
+
+        align-items: flex-start;
+    }
+
+
+    .products-card,
+    .delivery-card {
+        padding: 22px 18px;
+    }
+
+
+    .order-actions {
+        flex-direction: column;
+    }
+
+
+    .primary-btn,
+    .secondary-btn {
+        text-align: center;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    .order-total {
+        font-size: 17px;
+    }
+
+
+    .order-total strong {
+        font-size: 20px;
+    }
+
+
+    .current-status {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 7px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

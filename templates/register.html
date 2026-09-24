@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | ShopEase{% endblock %}
+
+{% block content %}
+
+<style>
+    .register-page {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+        background: #f7f7f7;
+    }
+
+    .register-container {
+        width: 100%;
+        max-width: 1050px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Left Side */
+
+    .register-left {
+        background: #111;
+        color: #fff;
+        padding: 60px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .register-left::before {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        top: -100px;
+        right: -100px;
+    }
+
+    .register-left::after {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+        bottom: -80px;
+        left: -70px;
+    }
+
+    .brand-logo {
+        font-size: 30px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 35px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .brand-logo span {
+        color: #aaa;
+    }
+
+    .register-left h1 {
+        font-size: 42px;
+        line-height: 1.15;
+        margin: 0 0 20px;
+        font-weight: 800;
+        position: relative;
+        z-index: 2;
+    }
+
+    .register-left > p {
+        color: #bbb;
+        font-size: 15px;
+        line-height: 1.8;
+        max-width: 420px;
+        margin-bottom: 35px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .benefits {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .benefit {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        color: #ddd;
+        font-size: 14px;
+    }
+
+    .benefit-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #fff;
+        color: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    /* Right Side */
+
+    .register-right {
+        padding: 55px 55px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .register-heading {
+        margin-bottom: 30px;
+    }
+
+    .register-heading h2 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 800;
+        color: #111;
+    }
+
+    .register-heading p {
+        margin: 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    /* Form */
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .form-group input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 15px;
+        border: 1px solid #ddd;
+        border-radius: 11px;
+        background: #fafafa;
+        color: #111;
+        font-size: 14px;
+        outline: none;
+        transition: 0.25s;
+    }
+
+    .form-group input:focus {
+        border-color: #111;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-help {
+        margin-top: 7px;
+        font-size: 11px;
+        color: #888;
+        line-height: 1.5;
+    }
+
+    /* Errors */
+
+    .error-box {
+        background: #f7f7f7;
+        border-left: 4px solid #111;
+        padding: 12px 14px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #444;
+    }
+
+    .field-error {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #555;
+    }
+
+    /* Button */
+
+    .register-btn {
+        width: 100%;
+        border: none;
+        padding: 15px;
+        border-radius: 11px;
+        background: #111;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 5px;
+    }
+
+    .register-btn:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Login */
+
+    .login-link {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 14px;
+        color: #777;
+    }
+
+    .login-link a {
+        color: #111;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 850px) {
+        .register-container {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+        }
+
+        .register-left {
+            padding: 45px 35px;
+        }
+
+        .register-left h1 {
+            font-size: 34px;
+        }
+
+        .register-right {
+            padding: 45px 35px;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .register-page {
+            padding: 25px 12px;
+        }
+
+        .register-left {
+            padding: 35px 25px;
+        }
+
+        .register-right {
+            padding: 35px 25px;
+        }
+
+        .register-left h1 {
+            font-size: 29px;
+        }
+
+        .brand-logo {
+            font-size: 25px;
+        }
+
+        .register-heading h2 {
+            font-size: 25px;
+        }
+    }
+</style>
+
+
+<div class="register-page">
+
+    <div class="register-container">
+
+        <!-- LEFT SIDE -->
+
+        <div class="register-left">
+
+            <div class="brand-logo">
+                SHOP<span>EASE</span>
+            </div>
+
+            <h1>
+                Create your<br>
+                ShopEase account.
+            </h1>
+
+            <p>
+                Join ShopEase and enjoy a simple, secure and
+                seamless shopping experience. Create your account
+                and start exploring our products.
+            </p>
+
+            <div class="benefits">
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Easy and secure account creation
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Track your orders easily
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Manage your shopping cart
+                    </span>
+
+                </div>
+
+
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        Get a personalized shopping experience
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="register-right">
+
+            <div class="register-heading">
+
+                <h2>
+                    Create Account
+                </h2>
+
+                <p>
+                    Enter your details to get started.
+                </p>
+
+            </div>
+
+
+            <!-- General Errors -->
+
+            {% if form.non_field_errors %}
+
+                <div class="error-box">
+
+                    {% for error in form.non_field_errors %}
+
+                        {{ error }}
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- Username -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+
+                    {{ form.username }}
+
+                    {% if form.username.errors %}
+
+                        <div class="field-error">
+
+                            {% for error in form.username.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                    <div class="form-help">
+                        Choose a unique username for your account.
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.password1.id_for_label }}">
+                        Password
+                    </label>
+
+                    {{ form.password1 }}
+
+                    {% if form.password1.errors %}
+
+                        <div class="field-error">
+
+                            {% for error in form.password1.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                    <div class="form-help">
+                        Use at least 8 characters with a combination
+                        of letters and numbers.
+                    </div>
+
+                </div>
+
+
+                <!-- Confirm Password -->
+
+                <div class="form-group">
+
+                    <label for="{{ form.password2.id_for_label }}">
+                        Confirm Password
+                    </label>
+
+                    {{ form.password2 }}
+
+                    {% if form.password2.errors %}
+
+                        <div class="field-error">
+
+                            {% for error in form.password2.errors %}
+                                {{ error }}
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="register-btn"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <div class="login-link">
+
+                Already have an account?
+
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

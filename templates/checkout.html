@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout | ShopEase{% endblock %}
+
+{% block content %}
+
+<section class="checkout-page">
+
+    <!-- Header -->
+    <div class="checkout-header">
+        <span class="eyebrow">SHOPEASE</span>
+        <h1>Checkout</h1>
+        <p>Complete your details to place your order.</p>
+    </div>
+
+    <div class="checkout-layout">
+
+        <!-- LEFT SIDE -->
+        <div class="checkout-form-card">
+
+            <h2>Delivery Information</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                        maxlength="15"
+                        required
+                    >
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label for="address">Delivery Address</label>
+
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        placeholder="Enter your complete delivery address"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- City + Pincode -->
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="Enter city"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode">Pincode</label>
+
+                        <input
+                            type="text"
+                            id="pincode"
+                            name="pincode"
+                            placeholder="6-digit pincode"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            inputmode="numeric"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <!-- Payment -->
+                <div class="payment-box">
+
+                    <div class="payment-icon">
+                        💳
+                    </div>
+
+                    <div>
+                        <h3>Cash on Delivery</h3>
+
+                        <p>
+                            Pay when your order arrives at your doorstep.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Place Order -->
+                <button type="submit" class="place-order-btn">
+                    Place Order →
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="order-summary">
+
+            <h2>Your Order</h2>
+
+            {% for item in items %}
+
+            <div class="summary-product">
+
+                <div class="summary-image">
+
+                    {% if item.product.image %}
+                        <img
+                            src="{{ item.product.image.url }}"
+                            alt="{{ item.product.name }}"
+                        >
+                    {% else %}
+                        <span>No Image</span>
+                    {% endif %}
+
+                </div>
+
+                <div class="summary-product-info">
+
+                    <h3>
+                        {{ item.product.name }}
+                    </h3>
+
+                    <p>
+                        Qty: {{ item.quantity }}
+                    </p>
+
+                    <strong>
+                        ₹{{ item.subtotal }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- Subtotal -->
+            <div class="summary-line">
+                <span>Subtotal</span>
+                <span>₹{{ total }}</span>
+            </div>
+
+            <!-- Delivery -->
+            <div class="summary-line">
+                <span>Delivery</span>
+                <span class="free">FREE</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <!-- Total -->
+            <div class="summary-total">
+                <span>Total</span>
+                <strong>₹{{ total }}</strong>
+            </div>
+
+            <!-- Security -->
+            <div class="secure-checkout">
+                🔒 Secure &amp; Safe Checkout
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+.checkout-page {
+    min-height: 80vh;
+    padding: 70px 6%;
+}
+
+
+/* Header */
+
+.checkout-header {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.checkout-header h1 {
+    font-size: 42px;
+    margin: 10px 0;
+}
+
+.checkout-header p {
+    color: #777;
+}
+
+.eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+
+/* Layout */
+
+.checkout-layout {
+    max-width: 1150px;
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 35px;
+}
+
+
+/* Form Card */
+
+.checkout-form-card {
+    background: white;
+    padding: 35px;
+    border-radius: 18px;
+
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
+}
+
+.checkout-form-card h2 {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+
+/* Form */
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 15px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    font-size: 15px;
+    font-family: inherit;
+
+    box-sizing: border-box;
+    outline: none;
+
+    transition: 0.2s;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #111;
+
+    box-shadow:
+        0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Two Fields */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+
+/* Payment */
+
+.payment-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 18px;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+
+    margin: 25px 0;
+}
+
+.payment-icon {
+    font-size: 30px;
+}
+
+.payment-box h3 {
+    margin: 0 0 5px;
+}
+
+.payment-box p {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
+
+
+/* Place Order */
+
+.place-order-btn {
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #111;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.place-order-btn:hover {
+    background: #333;
+    transform: translateY(-1px);
+}
+
+
+/* Order Summary */
+
+.order-summary {
+    background: #111;
+    color: white;
+
+    padding: 30px;
+
+    border-radius: 18px;
+
+    height: fit-content;
+
+    position: sticky;
+    top: 30px;
+}
+
+.order-summary h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+
+/* Products */
+
+.summary-product {
+    display: flex;
+    gap: 14px;
+
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+
+    border-bottom: 1px solid #333;
+}
+
+.summary-image {
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+    overflow: hidden;
+
+    background: #222;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #888;
+    font-size: 10px;
+}
+
+.summary-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.summary-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.summary-product-info h3 {
+    margin: 0 0 5px;
+    font-size: 15px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-product-info p {
+    margin: 0 0 5px;
+
+    color: #aaa;
+    font-size: 12px;
+}
+
+.summary-product-info strong {
+    font-size: 14px;
+}
+
+
+/* Summary */
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+
+    color: #ccc;
+}
+
+.free {
+    color: #8fd694;
+    font-weight: 600;
+}
+
+.summary-divider {
+    border-top: 1px solid #333;
+    margin: 22px 0;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 21px;
+}
+
+.summary-total strong {
+    color: white;
+}
+
+.secure-checkout {
+    text-align: center;
+
+    margin-top: 22px;
+    padding-top: 18px;
+
+    border-top: 1px solid #333;
+
+    color: #aaa;
+    font-size: 12px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .order-summary {
+        position: static;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .checkout-page {
+        padding: 45px 20px;
+    }
+
+    .checkout-header h1 {
+        font-size: 32px;
+    }
+
+    .checkout-form-card {
+        padding: 25px 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .order-summary {
+        padding: 25px 20px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

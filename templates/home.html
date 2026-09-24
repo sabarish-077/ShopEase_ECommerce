@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home | ShopEase
+{% endblock %}
+
+{% block content %}
+
+<section class="bg-primary text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+
+            <div class="col-md-7">
+                <h1 class="display-4 fw-bold">
+                    Shop Smart. Live Better.
+                </h1>
+
+                <p class="lead">
+                    Discover amazing products at great prices.
+                </p>
+
+                <a href="#" class="btn btn-light btn-lg">
+                    Shop Now
+                </a>
+            </div>
+
+            <div class="col-md-5 text-center">
+                <div class="display-1">
+                    🛍️
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5">
+    <div class="container">
+
+        <h2 class="text-center fw-bold mb-4">
+            Shop by Category
+        </h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-3">
+                <div class="card text-center p-4 shadow-sm">
+                    <h3>👕</h3>
+                    <h5>Fashion</h5>
+                    <p>Latest fashion products</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center p-4 shadow-sm">
+                    <h3>👟</h3>
+                    <h5>Footwear</h5>
+                    <p>Trendy footwear collection</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center p-4 shadow-sm">
+                    <h3>📱</h3>
+                    <h5>Electronics</h5>
+                    <p>Latest electronic products</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center p-4 shadow-sm">
+                    <h3>🎒</h3>
+                    <h5>Accessories</h5>
+                    <p>Useful everyday accessories</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<section class="py-5 bg-light">
+    <div class="container">
+
+        <h2 class="text-center fw-bold mb-4">
+            Featured Products
+        </h2>
+
+        <div class="row g-4">
+
+            {% for product in products %}
+
+            <div class="col-md-4 col-lg-3">
+
+                <div class="card h-100 shadow-sm">
+
+                    {% if product.image %}
+                        <img
+                            src="{{ product.image.url }}"
+                            class="card-img-top"
+                            alt="{{ product.name }}"
+                        >
+                    {% else %}
+                        <div class="text-center p-5 bg-secondary text-white">
+                            No Image
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            {{ product.name }}
+                        </h5>
+
+                        <p class="card-text">
+                            {{ product.description|truncatewords:12 }}
+                        </p>
+
+                        <h5 class="text-primary">
+                            ₹{{ product.price }}
+                        </h5>
+
+                        <button class="btn btn-dark w-100">
+                            Add to Cart
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-12 text-center">
+                <p class="text-muted">
+                    No products available yet.
+                </p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

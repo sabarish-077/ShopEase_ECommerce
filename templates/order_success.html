@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Successful | ShopEase{% endblock %}
+
+{% block content %}
+
+<section class="success-page">
+
+    <div class="success-card">
+
+        <!-- Success Icon -->
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <span class="success-label">
+            ORDER CONFIRMED
+        </span>
+
+        <h1>Thank You for Your Order!</h1>
+
+        <p class="success-message">
+            Your order has been placed successfully.
+            We will prepare your items for delivery.
+        </p>
+
+
+        <!-- Order Information -->
+
+        <div class="order-info">
+
+            <div class="info-box">
+
+                <span>Order ID</span>
+
+                <strong>
+                    #{{ order.id }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>Order Status</span>
+
+                <strong class="status">
+                    {{ order.status }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <span>Total Amount</span>
+
+                <strong>
+                    ₹{{ order.total_amount }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Delivery Details -->
+
+        <div class="delivery-card">
+
+            <h2>Delivery Details</h2>
+
+            <div class="delivery-row">
+
+                <span>📞 Phone</span>
+
+                <strong>
+                    {{ order.phone }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-row">
+
+                <span>📍 Address</span>
+
+                <strong>
+                    {{ order.address }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-row">
+
+                <span>🏙️ City</span>
+
+                <strong>
+                    {{ order.city }}
+                </strong>
+
+            </div>
+
+
+            <div class="delivery-row">
+
+                <span>📮 Pincode</span>
+
+                <strong>
+                    {{ order.pincode }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div class="success-actions">
+
+            <a
+                href="{% url 'my_orders' %}"
+                class="primary-btn"
+            >
+                View My Orders
+            </a>
+
+            <a
+                href="{% url 'products' %}"
+                class="secondary-btn"
+            >
+                Continue Shopping
+            </a>
+
+        </div>
+
+
+        <p class="confirmation-note">
+            📦 Your order status will be updated as it moves through delivery.
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* =========================
+   SUCCESS PAGE
+========================= */
+
+.success-page {
+    min-height: 80vh;
+
+    padding: 70px 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+}
+
+
+/* =========================
+   SUCCESS CARD
+========================= */
+
+.success-card {
+    width: 100%;
+
+    max-width: 800px;
+
+    background: #fff;
+
+    padding: 50px;
+
+    border-radius: 22px;
+
+    text-align: center;
+
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   SUCCESS ICON
+========================= */
+
+.success-icon {
+    width: 80px;
+
+    height: 80px;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    background: #111;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 45px;
+
+    font-weight: 700;
+
+    animation: successPop 0.5s ease;
+}
+
+@keyframes successPop {
+
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}
+
+
+.success-label {
+    font-size: 12px;
+
+    letter-spacing: 3px;
+
+    font-weight: 700;
+
+    color: #777;
+}
+
+
+.success-card h1 {
+    font-size: 36px;
+
+    margin: 12px 0;
+}
+
+
+.success-message {
+    max-width: 550px;
+
+    margin: 0 auto 35px;
+
+    color: #777;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   ORDER INFO
+========================= */
+
+.order-info {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+}
+
+
+.info-box {
+    padding: 20px;
+
+    border: 1px solid #e5e5e5;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    transition: 0.25s ease;
+}
+
+
+.info-box:hover {
+    transform: translateY(-3px);
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+
+.info-box span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+
+.info-box strong {
+    font-size: 18px;
+}
+
+
+.status {
+    color: #333;
+}
+
+
+/* =========================
+   DELIVERY DETAILS
+========================= */
+
+.delivery-card {
+    text-align: left;
+
+    padding: 25px;
+
+    border-radius: 15px;
+
+    background: #f8f8f8;
+
+    margin-bottom: 30px;
+}
+
+
+.delivery-card h2 {
+    margin-top: 0;
+
+    margin-bottom: 20px;
+
+    font-size: 21px;
+}
+
+
+.delivery-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    font-size: 14px;
+}
+
+
+.delivery-row:last-child {
+    border-bottom: none;
+}
+
+
+.delivery-row span {
+    color: #777;
+}
+
+
+.delivery-row strong {
+    text-align: right;
+
+    max-width: 60%;
+
+    word-break: break-word;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.success-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 25px;
+}
+
+
+.primary-btn,
+.secondary-btn {
+    display: inline-block;
+
+    padding: 14px 24px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+
+.primary-btn {
+    background: #111;
+
+    color: white;
+}
+
+
+.primary-btn:hover {
+    background: #333;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+
+.secondary-btn {
+    border: 1px solid #111;
+
+    color: #111;
+
+    background: white;
+}
+
+
+.secondary-btn:hover {
+    background: #f2f2f2;
+
+    color: #111;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   NOTE
+========================= */
+
+.confirmation-note {
+    margin: 0;
+
+    color: #999;
+
+    font-size: 12px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .success-page {
+        padding: 40px 15px;
+    }
+
+
+    .success-card {
+        padding: 35px 20px;
+    }
+
+
+    .success-card h1 {
+        font-size: 28px;
+    }
+
+
+    .order-info {
+        grid-template-columns: 1fr;
+    }
+
+
+    .delivery-row {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .delivery-row strong {
+        text-align: left;
+
+        max-width: 100%;
+    }
+
+
+    .success-actions {
+        flex-direction: column;
+    }
+
+
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+
+        box-sizing: border-box;
+    }
+
+}
+
+</style>
+
+{% endblock %}

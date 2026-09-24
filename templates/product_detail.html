@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} | ShopEase{% endblock %}
+
+{% block content %}
+
+<section class="product-detail-page">
+
+    <div class="product-detail-container">
+
+        <!-- Product Image -->
+        <div class="detail-image-box">
+
+            {% if product.image %}
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+            {% else %}
+                <div class="detail-no-image">
+                    No Image Available
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <!-- Product Information -->
+        <div class="detail-info">
+
+            <span class="detail-category">
+                {{ product.category.name }}
+            </span>
+
+            <h1>{{ product.name }}</h1>
+
+            <div class="detail-price">
+                ₹{{ product.price }}
+            </div>
+
+            <p class="detail-description">
+                {{ product.description }}
+            </p>
+
+
+            <!-- Stock -->
+            <div class="detail-stock">
+
+                {% if product.stock > 0 %}
+
+                    <span class="stock-available">
+                        ✓ In Stock
+                    </span>
+
+                    <span>
+                        {{ product.stock }} available
+                    </span>
+
+                {% else %}
+
+                    <span class="stock-unavailable">
+                        ✕ Out of Stock
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Add To Cart -->
+            {% if product.stock > 0 %}
+
+                {% if user.is_authenticated %}
+
+                    <a
+                        href="{% url 'add_to_cart' product.id %}"
+                        class="add-cart-btn"
+                    >
+                        🛒 Add to Cart
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'login' %}?next={{ request.path }}"
+                        class="add-cart-btn"
+                    >
+                        Login to Add to Cart
+                    </a>
+
+                {% endif %}
+
+            {% else %}
+
+                <button
+                    class="disabled-cart-btn"
+                    disabled
+                >
+                    Out of Stock
+                </button>
+
+            {% endif %}
+
+
+            <!-- Features -->
+            <div class="product-features">
+
+                <div>
+                    <strong>🚚</strong>
+                    <span>Fast Delivery</span>
+                </div>
+
+                <div>
+                    <strong>🔒</strong>
+                    <span>Secure Checkout</span>
+                </div>
+
+                <div>
+                    <strong>↩</strong>
+                    <span>Easy Returns</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+.product-detail-page {
+    padding: 70px 6%;
+    min-height: 75vh;
+    background: #f7f7f7;
+}
+
+.product-detail-container {
+    max-width: 1200px;
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 70px;
+    align-items: center;
+}
+
+
+/* Image */
+
+.detail-image-box {
+    width: 100%;
+    height: 550px;
+
+    background: #f5f5f5;
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-image-box img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: 0.4s;
+}
+
+.detail-image-box img:hover {
+    transform: scale(1.04);
+}
+
+.detail-no-image {
+    color: #999;
+    font-size: 18px;
+}
+
+
+/* Information */
+
+.detail-info {
+    padding: 20px 0;
+}
+
+.detail-category {
+    font-size: 13px;
+    text-transform: uppercase;
+
+    letter-spacing: 2px;
+    color: #888;
+}
+
+.detail-info h1 {
+    font-size: 46px;
+    line-height: 1.1;
+
+    margin: 15px 0;
+}
+
+.detail-price {
+    font-size: 30px;
+    font-weight: 700;
+
+    margin: 20px 0;
+}
+
+.detail-description {
+    color: #666;
+
+    font-size: 16px;
+    line-height: 1.8;
+
+    margin-bottom: 25px;
+}
+
+.detail-stock {
+    display: flex;
+    gap: 15px;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+    font-size: 14px;
+}
+
+.stock-available {
+    color: #198754;
+    font-weight: 700;
+}
+
+.stock-unavailable {
+    color: #c00;
+    font-weight: 700;
+}
+
+
+/* Add Cart */
+
+.add-cart-btn {
+    display: inline-block;
+
+    width: 100%;
+
+    padding: 16px;
+
+    background: #111;
+    color: white;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+.add-cart-btn:hover {
+    background: #333;
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+.disabled-cart-btn {
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+
+    background: #ddd;
+    color: #888;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+}
+
+
+/* Features */
+
+.product-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-top: 35px;
+
+    padding-top: 30px;
+
+    border-top: 1px solid #eee;
+}
+
+.product-features div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    font-size: 13px;
+
+    color: #666;
+}
+
+.product-features strong {
+    font-size: 20px;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .product-detail-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .detail-image-box {
+        height: 450px;
+    }
+
+    .detail-info h1 {
+        font-size: 36px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .product-detail-page {
+        padding: 40px 20px;
+    }
+
+    .detail-image-box {
+        height: 350px;
+    }
+
+    .detail-info h1 {
+        font-size: 30px;
+    }
+
+    .detail-price {
+        font-size: 25px;
+    }
+
+    .product-features {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+{% endblock %}
