@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-mql(-_gdrsh+6%x6c7_49_b7rw^@2yr+eza7%4@sd+hb%dl*xd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "shopeaseecommerce-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
