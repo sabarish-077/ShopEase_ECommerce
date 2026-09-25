@@ -28,11 +28,10 @@ SECRET_KEY = 'django-insecure-mql(-_gdrsh+6%x6c7_49_b7rw^@2yr+eza7%4@sd+hb%dl*xd
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "shopeaseecommerce-production.up.railway.app",
+    "shopease-hhz1.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
-
 
 # Application definition
 
