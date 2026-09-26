@@ -62,20 +62,11 @@
 
             <div class="product-image">
 
-                {% if product.image %}
-
-                    <img
-                        src="{{ product.image.url }}"
-                        alt="{{ product.name }}"
-                    >
-
-                {% else %}
-
-                    <div class="no-image">
-                        No Image
-                    </div>
-
-                {% endif %}
+             {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+{% else %}
+    <img src="https://via.placeholder.com/500x500?text=No+Image" alt="No Image">
+{% endif %}
 
             </div>
 
