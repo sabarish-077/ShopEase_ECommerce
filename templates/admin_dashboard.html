@@ -714,14 +714,14 @@
 
                     <tr>
 
-                        <td>
+                        <td data-label="ID">
                             <strong>
                                 #{{ category.id }}
                             </strong>
                         </td>
 
 
-                        <td>
+                        <td data-label="Category">
 
                             <strong class="category-name">
                                 {{ category.name }}
@@ -730,7 +730,7 @@
                         </td>
 
 
-                        <td>
+                        <td data-label="Description">
 
                             <span class="category-description">
 
@@ -749,7 +749,7 @@
                         </td>
 
 
-                        <td>
+                        <td data-label="Products">
 
                             <span class="product-count">
                                 {{ category.products.count }}
@@ -758,7 +758,7 @@
                         </td>
 
 
-                        <td>
+                        <td data-label="Actions">
 
                             <div class="category-actions">
 
@@ -1987,6 +1987,66 @@
     .orders-table-wrapper {
         width: 100%;
         overflow-x: auto;
+    }
+
+    .categories-management > .section-heading {
+        width: 100%;
+    }
+
+    .categories-management .add-small-btn {
+        width: 100%;
+    }
+
+    .categories-table-wrapper {
+        overflow: visible;
+    }
+
+    .categories-table {
+        display: block;
+        min-width: 0;
+    }
+
+    .categories-table thead {
+        display: none;
+    }
+
+    .categories-table tbody {
+        display: grid;
+        gap: 12px;
+    }
+
+    .categories-table tbody tr {
+        display: grid;
+        gap: 11px;
+        padding: 14px;
+        border: 1px solid #e8e8e8;
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .categories-table tbody td {
+        display: grid;
+        grid-template-columns: minmax(76px, 0.4fr) minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+        padding: 0;
+        border: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .categories-table tbody td::before {
+        content: attr(data-label);
+        color: #777;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .categories-table .category-actions {
+        gap: 6px;
+    }
+
+    .categories-table .category-actions a {
+        padding: 8px 10px;
     }
 
     /* PAGINATION */
