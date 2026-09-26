@@ -91,4 +91,39 @@ path(
     views.logout_user,
     name="logout"
 ),
+path(
+    "admin-register/",
+    views.admin_register,
+    name="admin_register"
+),
+path(
+    "admin-dashboard/add-product/",
+    views.add_product,
+    name="add_product"
+),
+path(
+    "admin-dashboard/add-category/",
+    views.add_category,
+    name="add_category"
+),
+path(
+    "admin-dashboard/edit-product/<int:product_id>/",
+    views.edit_product,
+    name="edit_product"
+),
+path(
+    "admin-dashboard/delete-product/<int:product_id>/",
+    views.delete_product,
+    name="delete_product"
+),
+path(
+    "admin-dashboard/edit-category/<int:category_id>/",
+    views.edit_category,
+    name="edit_category"
+),
+path(
+    "admin-dashboard/delete-category/<int:category_id>/",
+    views.delete_category,
+    name="delete_category"
+),
 ]

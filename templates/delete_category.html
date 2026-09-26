@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Category | ShopEase{% endblock %}
+
+{% block content %}
+
+<style>
+    .delete-container {
+        min-height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 50px 20px;
+    }
+
+    .delete-card {
+        width: 100%;
+        max-width: 500px;
+        background: #fff;
+        padding: 40px;
+        border-radius: 18px;
+        text-align: center;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .delete-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #fee2e2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+
+    .delete-card h1 {
+        margin-bottom: 12px;
+        color: #111;
+    }
+
+    .delete-card p {
+        color: #777;
+        line-height: 1.6;
+    }
+
+    .category-name {
+        color: #111;
+        font-weight: 700;
+    }
+
+    .warning {
+        margin: 20px 0 25px;
+        padding: 14px;
+        background: #fff7ed;
+        color: #9a3412;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    .delete-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .delete-btn {
+        padding: 12px 22px;
+        background: #dc2626;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .delete-btn:hover {
+        background: #b91c1c;
+    }
+
+    .cancel-btn {
+        padding: 12px 22px;
+        background: #111;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .cancel-btn:hover {
+        background: #333;
+    }
+
+    @media (max-width: 500px) {
+        .delete-card {
+            padding: 30px 20px;
+        }
+
+        .delete-actions {
+            flex-direction: column;
+        }
+
+        .delete-btn,
+        .cancel-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="delete-container">
+
+    <div class="delete-card">
+
+        <div class="delete-icon">
+            🗑️
+        </div>
+
+        <h1>Delete Category?</h1>
+
+        <p>
+            Are you sure you want to delete
+            <span class="category-name">
+                "{{ category.name }}"
+            </span>?
+        </p>
+
+        <div class="warning">
+            ⚠️ Warning: Products belonging to this category
+            may also be deleted because your Product model uses
+            CASCADE.
+        </div>
+
+        <div class="delete-actions">
+
+            <form
+                method="POST"
+                action="{% url 'delete_category' category.id %}"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="delete-btn"
+                >
+                    Yes, Delete
+                </button>
+
+            </form>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="cancel-btn"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

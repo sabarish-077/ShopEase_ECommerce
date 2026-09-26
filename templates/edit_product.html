@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .edit-product-container {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 35px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .edit-product-container h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #111;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .form-group textarea {
+        height: 120px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #111;
+    }
+
+    .current-image {
+        margin-bottom: 15px;
+    }
+
+    .current-image img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .update-btn {
+        width: 100%;
+        padding: 14px;
+        background: #111;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .update-btn:hover {
+        background: #333;
+    }
+
+    .back-btn {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #555;
+        text-decoration: none;
+    }
+
+    .back-btn:hover {
+        color: #111;
+    }
+
+    .message {
+        padding: 12px;
+        margin-bottom: 15px;
+        background: #f1f1f1;
+        border-radius: 8px;
+        text-align: center;
+    }
+</style>
+
+
+<div class="edit-product-container">
+
+    <h1>Edit Product</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label>Category</label>
+
+            <select name="category" required>
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category.id }}"
+                        {% if product.category.id == category.id %}selected{% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label>Product Name</label>
+
+            <input
+                type="text"
+                name="name"
+                value="{{ product.name }}"
+                required
+            >
+        </div>
+
+
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea
+                name="description"
+                required
+            >{{ product.description }}</textarea>
+        </div>
+
+
+        <div class="form-group">
+            <label>Price</label>
+
+            <input
+                type="number"
+                name="price"
+                value="{{ product.price }}"
+                step="0.01"
+                required
+            >
+        </div>
+
+
+        <div class="form-group">
+            <label>Stock</label>
+
+            <input
+                type="number"
+                name="stock"
+                value="{{ product.stock }}"
+                min="0"
+                required
+            >
+        </div>
+
+
+        {% if product.image %}
+            <div class="form-group current-image">
+
+                <label>Current Image</label>
+
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+
+            </div>
+        {% endif %}
+
+
+        <div class="form-group">
+
+            <label>Change Image</label>
+
+            <input
+                type="file"
+                name="image"
+                accept="image/*"
+            >
+
+        </div>
+
+
+        <button type="submit" class="update-btn">
+            Update Product
+        </button>
+
+    </form>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="back-btn"
+    >
+        ← Back to Admin Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

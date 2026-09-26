@@ -13,6 +13,9 @@ from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import user_passes_test
 
 
 def home(request):
@@ -373,6 +376,7 @@ def admin_dashboard(request):
     ).count()
 
     total_products = Product.objects.count()
+    products = Product.objects.all()
 
     total_sales = sum(
         order.total_amount
@@ -400,7 +404,7 @@ def admin_dashboard(request):
     low_stock_products = Product.objects.filter(
         stock__lte=5
     ).order_by("stock")
-
+    categories = Category.objects.all()
     recent_orders = Order.objects.select_related(
         "user"
     ).order_by(
@@ -411,13 +415,14 @@ def admin_dashboard(request):
         "total_orders": total_orders,
         "total_customers": total_customers,
         "total_products": total_products,
+        "products": products,
         "total_sales": total_sales,
 
         "pending_orders": pending_orders,
         "confirmed_orders": confirmed_orders,
         "shipped_orders": shipped_orders,
         "delivered_orders": delivered_orders,
-
+        "categories": categories,
         "low_stock_products": low_stock_products,
         "recent_orders": recent_orders,
     }
@@ -426,6 +431,7 @@ def admin_dashboard(request):
         request,
         "admin_dashboard.html",
         context
+        
     )
 def register(request):
 
@@ -455,10 +461,268 @@ def register(request):
             "form": form
         }
     )
+def admin_register(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect("admin_dashboard")
+        return redirect("home")
 
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm_password", "")
+
+        if not username or not email or not password:
+            messages.error(request, "All fields are required.")
+            return render(request, "admin_register.html")
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "admin_register.html")
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, "admin_register.html")
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            is_staff=True,
+            is_superuser=True
+        )
+
+        login(request, user)
+
+        return redirect("admin_dashboard")
+
+    return render(request, "admin_register.html")
 
 def logout_user(request):
 
     logout(request)
 
     return redirect("home")
+@staff_member_required
+def add_category(request):
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        description = request.POST.get("description", "").strip()
+
+        if not name:
+            messages.error(request, "Category name is required.")
+            return render(request, "add_category.html")
+
+        if Category.objects.filter(name__iexact=name).exists():
+            messages.error(request, "Category already exists.")
+            return render(request, "add_category.html")
+
+        Category.objects.create(
+            name=name,
+            description=description
+        )
+
+        messages.success(request, "Category added successfully!")
+
+        return redirect("add_category")
+
+    return render(request, "add_category.html")
+@staff_member_required
+def edit_category(request, category_id):
+
+    category = get_object_or_404(Category, id=category_id)
+
+    if request.method == "POST":
+
+        name = request.POST.get("name", "").strip()
+        description = request.POST.get("description", "").strip()
+
+        if not name:
+            messages.error(request, "Category name is required.")
+
+            return render(
+                request,
+                "edit_category.html",
+                {"category": category}
+            )
+
+        if Category.objects.filter(
+            name__iexact=name
+        ).exclude(id=category.id).exists():
+
+            messages.error(
+                request,
+                "Category already exists."
+            )
+
+            return render(
+                request,
+                "edit_category.html",
+                {"category": category}
+            )
+
+        category.name = name
+        category.description = description
+        category.save()
+
+        messages.success(
+            request,
+            "Category updated successfully!"
+        )
+
+        return redirect(
+            "edit_category",
+            category_id=category.id
+        )
+
+    return render(
+        request,
+        "edit_category.html",
+        {"category": category}
+    )
+
+
+@staff_member_required
+def delete_category(request, category_id):
+
+    category = get_object_or_404(
+        Category,
+        id=category_id
+    )
+
+    if request.method == "POST":
+
+        category.delete()
+
+        messages.success(
+            request,
+            "Category deleted successfully!"
+        )
+
+        return redirect("admin_dashboard")
+
+    return render(
+        request,
+        "delete_category.html",
+        {"category": category}
+    )
+@staff_member_required
+def add_product(request):
+
+    categories = Category.objects.all()
+
+    if request.method == "POST":
+
+        category_id = request.POST.get("category")
+        name = request.POST.get("name", "").strip()
+        description = request.POST.get("description", "").strip()
+        price = request.POST.get("price")
+        stock = request.POST.get("stock")
+        image = request.FILES.get("image")
+
+        if not category_id or not name or not description or not price or not stock:
+            messages.error(request, "Please fill all required fields.")
+            return render(
+                request,
+                "add_product.html",
+                {"categories": categories}
+            )
+
+        category = get_object_or_404(Category, id=category_id)
+
+        Product.objects.create(
+            category=category,
+            name=name,
+            description=description,
+            price=price,
+            stock=stock,
+            image=image
+        )
+
+        messages.success(request, "Product added successfully!")
+
+        return redirect("add_product")
+
+    return render(
+        request,
+        "add_product.html",
+        {
+            "categories": categories
+        }
+    )
+@staff_member_required
+def edit_product(request, product_id):
+
+    product = get_object_or_404(Product, id=product_id)
+    categories = Category.objects.all()
+
+    if request.method == "POST":
+
+        category_id = request.POST.get("category")
+        name = request.POST.get("name", "").strip()
+        description = request.POST.get("description", "").strip()
+        price = request.POST.get("price")
+        stock = request.POST.get("stock")
+        image = request.FILES.get("image")
+
+        if not category_id or not name or not description or not price or not stock:
+            messages.error(request, "Please fill all required fields.")
+
+            return render(
+                request,
+                "edit_product.html",
+                {
+                    "product": product,
+                    "categories": categories
+                }
+            )
+
+        product.category = get_object_or_404(Category, id=category_id)
+        product.name = name
+        product.description = description
+        product.price = price
+        product.stock = stock
+
+        if image:
+            product.image = image
+
+        product.save()
+
+        messages.success(request, "Product updated successfully!")
+
+        return redirect("edit_product", product_id=product.id)
+
+    return render(
+        request,
+        "edit_product.html",
+        {
+            "product": product,
+            "categories": categories
+        }
+    )
+@staff_member_required
+def delete_product(request, product_id):
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+
+        product.delete()
+
+        messages.success(
+            request,
+            "Product deleted successfully!"
+        )
+
+        return redirect("admin_dashboard")
+
+    return render(
+        request,
+        "delete_product.html",
+        {
+            "product": product
+        }
+    )

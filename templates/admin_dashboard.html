@@ -7,26 +7,45 @@
 
 <section class="admin-page">
 
-    <!-- Header -->
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-    <div class="admin-header">
+  <div class="admin-top-section">
 
-        <div>
-            <span class="eyebrow">SHOPEASE ADMIN</span>
-
-            <h1>Dashboard</h1>
-
-            <p>Manage your store and monitor orders.</p>
-        </div>
-
-        <a href="{% url 'admin_orders' %}" class="manage-btn">
-            Manage Orders →
-        </a>
-
+    <div class="admin-title">
+        <h1>Admin Dashboard</h1>
+        <p>Manage your ShopEase store</p>
     </div>
 
+    <div class="admin-actions">
+        <a href="{% url 'add_category' %}" class="admin-action-btn">
+            + Add Category
+        </a>
 
-    <!-- Statistics -->
+        <a href="{% url 'add_product' %}" class="admin-action-btn">
+            + Add Product
+        </a>
+
+        <a href="{% url 'admin_orders' %}" class="admin-action-btn">
+            📦 Manage Orders
+        </a>
+    </div>
+
+</div>
+        <div class="global-search">
+    <input
+        type="text"
+        id="globalSearch"
+        placeholder="🔍 Search products, categories, orders..."
+        onkeyup="globalDashboardSearch()"
+    >
+</div>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
 
     <div class="stats-grid">
 
@@ -80,9 +99,13 @@
     </div>
 
 
-    <!-- Order Status -->
+    <!-- =========================
+         ORDER STATUS + LOW STOCK
+    ========================== -->
 
     <div class="dashboard-grid">
+
+        <!-- Order Status -->
 
         <div class="status-card">
 
@@ -125,72 +148,724 @@
 
         <!-- Low Stock -->
 
-        <div class="low-stock-card">
+        <!-- Low Stock -->
 
-            <div class="section-heading">
+<div class="low-stock-card">
 
-                <div>
-                    <h2>Low Stock</h2>
-                    <p>Products that need attention</p>
-                </div>
+    <div class="section-heading">
 
-            </div>
-
-
-            {% if low_stock_products %}
-
-                <div class="stock-list">
-
-                    {% for product in low_stock_products %}
-
-                    <div class="stock-item">
-
-                        <div>
-
-                            <strong>
-                                {{ product.name }}
-                            </strong>
-
-                            <span>
-                                {{ product.category.name }}
-                            </span>
-
-                        </div>
-
-
-                        <span class="stock-count">
-                            {{ product.stock }} left
-                        </span>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <div class="no-stock-warning">
-                    ✓ All products have sufficient stock.
-                </div>
-
-            {% endif %}
-
+        <div>
+            <h2>Low Stock</h2>
+            <p>Products that need attention</p>
         </div>
 
     </div>
 
 
-    <!-- Recent Orders -->
+    {% if low_stock_products %}
+
+        <div class="stock-list">
+
+            {% for product in low_stock_products %}
+
+            <div class="stock-item">
+
+                <div class="stock-product-info">
+
+                    <strong>
+                        {{ product.name }}
+                    </strong>
+
+                    <span>
+                        {{ product.category.name }}
+                    </span>
+
+                </div>
+
+
+                <div class="stock-item-right">
+
+                    <span class="stock-count">
+                        {{ product.stock }} left
+                    </span>
+
+                    <a
+                        href="{% url 'edit_product' product.id %}"
+                        class="quick-view-btn"
+                    >
+                        👁️ View
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="no-stock-warning">
+            ✓ All products have sufficient stock.
+        </div>
+
+    {% endif %}
+
+</div>
+
+    <!-- =========================
+         PRODUCT MANAGEMENT
+    ========================== -->
+
+    <div class="products-management">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>Product Management</h2>
+
+                <p>Manage your store products</p>
+
+            </div>
+
+
+            <a
+                href="{% url 'add_product' %}"
+                class="add-small-btn"
+            >
+                + Add Product
+            </a>
+
+        </div>
+
+
+        <!-- Product Search & Filter -->
+
+        <div class="management-filters">
+
+            <!-- Search -->
+
+            <div class="search-box">
+
+                <span class="search-icon">🔍</span>
+
+                <input
+                    type="text"
+                    id="productSearch"
+                    placeholder="Search products..."
+                    onkeyup="filterProducts()"
+                >
+
+            </div>
+
+
+            <!-- Category Filter -->
+
+            <div class="filter-box">
+
+                <select
+                    id="productCategoryFilter"
+                    onchange="filterProducts()"
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    {% for category in categories %}
+
+                        <option value="{{ category.name|lower }}">
+                            {{ category.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- Stock Filter -->
+
+            <div class="filter-box">
+
+                <select
+                    id="productStockFilter"
+                    onchange="filterProducts()"
+                >
+
+                    <option value="">
+                        All Stock
+                    </option>
+
+                    <option value="low">
+                        Low Stock
+                    </option>
+
+                    <option value="available">
+                        Available
+                    </option>
+
+                    <option value="out">
+                        Out of Stock
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        {% if products %}
+
+        <div class="products-table-wrapper">
+
+            <table class="products-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Image
+                        </th>
+
+
+                        <th>
+
+                            Product
+
+                            <button
+                                type="button"
+                                class="sort-btn"
+                                onclick="sortProducts(1)"
+                                title="Sort Product"
+                            >
+                                ↕
+                            </button>
+
+                        </th>
+
+
+                        <th>
+
+                            Category
+
+                            <button
+                                type="button"
+                                class="sort-btn"
+                                onclick="sortProducts(2)"
+                                title="Sort Category"
+                            >
+                                ↕
+                            </button>
+
+                        </th>
+
+
+                        <th>
+
+                            Price
+
+                            <button
+                                type="button"
+                                class="sort-btn"
+                                onclick="sortProducts(3)"
+                                title="Sort Price"
+                            >
+                                ↕
+                            </button>
+
+                        </th>
+
+
+                        <th>
+
+                            Stock
+
+                            <button
+                                type="button"
+                                class="sort-btn"
+                                onclick="sortProducts(4)"
+                                title="Sort Stock"
+                            >
+                                ↕
+                            </button>
+
+                        </th>
+
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for product in products %}
+
+                    <tr>
+
+                        <!-- Product Image -->
+
+                        <td>
+
+                            {% if product.image %}
+
+                                <img
+                                    src="{{ product.image.url }}"
+                                    alt="{{ product.name }}"
+                                    class="product-thumb"
+                                >
+
+                            {% else %}
+
+                                <div class="no-image">
+                                    No Image
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Product Name -->
+
+                        <td>
+
+                            <strong class="product-name">
+                                {{ product.name }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Category -->
+
+                        <td>
+                            {{ product.category.name }}
+                        </td>
+
+
+                        <!-- Price -->
+
+                        <td>
+                            ₹{{ product.price }}
+                        </td>
+
+
+                        <!-- Stock -->
+
+                        <td>
+
+                            {% if product.stock <= 5 %}
+
+                                <span class="stock-low">
+                                    {{ product.stock }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="stock-good">
+                                    {{ product.stock }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            <div class="product-actions">
+
+                                <a
+                                    href="{% url 'edit_product' product.id %}"
+                                    class="edit-btn"
+                                >
+                                    ✏️ Edit
+                                </a>
+
+
+                                <a
+                                    href="{% url 'delete_product' product.id %}"
+                                    class="delete-product-btn"
+                                >
+                                    🗑️ Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =========================
+             PRODUCT PAGINATION
+        ========================== -->
+
+        <div
+            class="pagination"
+            id="productPagination"
+        >
+
+            <button
+                type="button"
+                id="productPrevBtn"
+                onclick="changeProductPage(-1)"
+            >
+                ← Previous
+            </button>
+
+
+            <span id="productPageInfo">
+                Page 1
+            </span>
+
+
+            <button
+                type="button"
+                id="productNextBtn"
+                onclick="changeProductPage(1)"
+            >
+                Next →
+            </button>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-products">
+
+            <div class="empty-icon">
+                🛍️
+            </div>
+
+            <h3>
+                No Products Yet
+            </h3>
+
+            <p>
+                Add your first product to start selling.
+            </p>
+
+            <a
+                href="{% url 'add_product' %}"
+                class="dashboard-btn"
+            >
+                + Add Product
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         CATEGORY MANAGEMENT
+    ========================== -->
+
+    <div class="categories-management">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Category Management
+                </h2>
+
+                <p>
+                    Manage your store categories
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'add_category' %}"
+                class="add-small-btn"
+            >
+                + Add Category
+            </a>
+
+        </div>
+
+
+        <!-- Category Search & Filter -->
+
+        <div class="management-filters category-filters">
+
+            <div class="search-box">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    id="categorySearch"
+                    placeholder="Search categories..."
+                    onkeyup="filterCategories()"
+                >
+
+            </div>
+
+
+            <div class="filter-box">
+
+                <select
+                    id="categoryProductFilter"
+                    onchange="filterCategories()"
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    <option value="with-products">
+                        With Products
+                    </option>
+
+                    <option value="empty">
+                        Empty Categories
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        {% if categories %}
+
+        <div class="categories-table-wrapper">
+
+            <table class="categories-table">
+
+                <thead>
+    <tr>
+
+        <th>ID</th>
+
+        <th>
+            Category
+            <button
+                type="button"
+                class="sort-btn"
+                onclick="sortCategories(1)"
+                title="Sort Category"
+            >
+                ↕
+            </button>
+        </th>
+
+        <th>
+            Description
+        </th>
+
+        <th>
+            Products
+            <button
+                type="button"
+                class="sort-btn"
+                onclick="sortCategories(3)"
+                title="Sort Product Count"
+            >
+                ↕
+            </button>
+        </th>
+
+        <th>
+            Actions
+        </th>
+
+    </tr>
+</thead>
+
+
+                <tbody>
+
+                    {% for category in categories %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                #{{ category.id }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            <strong class="category-name">
+                                {{ category.name }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="category-description">
+
+                                {% if category.description %}
+
+                                    {{ category.description|truncatechars:60 }}
+
+                                {% else %}
+
+                                    No description
+
+                                {% endif %}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="product-count">
+                                {{ category.products.count }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="category-actions">
+
+                                <a
+                                    href="{% url 'edit_category' category.id %}"
+                                    class="edit-btn"
+                                >
+                                    ✏️ Edit
+                                </a>
+
+
+                                <a
+                                    href="{% url 'delete_category' category.id %}"
+                                    class="delete-category-btn"
+                                >
+                                    🗑️ Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+        <!-- Category Pagination -->
+
+<div
+    class="pagination"
+    id="categoryPagination"
+>
+
+    <button
+        type="button"
+        id="categoryPrevBtn"
+        onclick="changeCategoryPage(-1)"
+    >
+        ← Previous
+    </button>
+
+    <span id="categoryPageInfo">
+        Page 1
+    </span>
+
+    <button
+        type="button"
+        id="categoryNextBtn"
+        onclick="changeCategoryPage(1)"
+    >
+        Next →
+    </button>
+
+</div>
+        {% else %}
+
+        <div class="empty-categories">
+
+            <div class="empty-icon">
+                📂
+            </div>
+
+            <h3>
+                No Categories Yet
+            </h3>
+
+            <p>
+                Create your first category to organize your products.
+            </p>
+
+            <a
+                href="{% url 'add_category' %}"
+                class="dashboard-btn"
+            >
+                + Add Category
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         RECENT ORDERS
+    ========================== -->
 
     <div class="recent-orders">
 
         <div class="section-heading">
 
             <div>
-                <h2>Recent Orders</h2>
-                <p>Latest customer orders</p>
+
+                <h2>
+                    Recent Orders
+                </h2>
+
+                <p>
+                    Latest customer orders
+                </p>
+
             </div>
+
 
             <a href="{% url 'admin_orders' %}">
                 View All →
@@ -209,17 +884,28 @@
 
                     <tr>
 
-                        <th>Order</th>
+                        <th>
+                            Order
+                        </th>
 
-                        <th>Customer</th>
+                        <th>
+                            Customer
+                        </th>
 
-                        <th>Date</th>
+                        <th>
+                            Date
+                        </th>
 
-                        <th>Total</th>
+                        <th>
+                            Total
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Status
+                        </th>
 
-                        <th></th>
+                        <th>
+                        </th>
 
                     </tr>
 
@@ -233,7 +919,9 @@
                     <tr>
 
                         <td>
-                            <strong>#{{ order.id }}</strong>
+                            <strong>
+                                #{{ order.id }}
+                            </strong>
                         </td>
 
 
@@ -254,7 +942,8 @@
 
                         <td>
 
-                            <span class="table-status
+                            <span
+                                class="table-status
                                 {% if order.status == 'Pending' %}
                                     pending
                                 {% elif order.status == 'Confirmed' %}
@@ -265,8 +954,8 @@
                                     delivered
                                 {% elif order.status == 'Cancelled' %}
                                     cancelled
-                                {% endif %}
-                            ">
+                                {% endif %}"
+                            >
 
                                 {{ order.status }}
 
@@ -313,7 +1002,6 @@
 
 
 {% block extra_css %}
-
 <style>
 
 /* =========================
@@ -321,9 +1009,11 @@
 ========================= */
 
 .admin-page {
+    width: 100%;
     min-height: 80vh;
-
     padding: 60px 6%;
+    box-sizing: border-box;
+    overflow-x: clip;
 }
 
 
@@ -331,65 +1021,162 @@
    HEADER
 ========================= */
 
+.admin-top-section,
 .admin-header {
+    width: 100%;
     max-width: 1200px;
-
     margin: 0 auto 35px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
-    gap: 20px;
+    gap: 25px;
+    box-sizing: border-box;
 }
 
+.admin-title {
+    min-width: 0;
+}
+
+.admin-title h1 {
+    margin: 8px 0;
+    font-size: 40px;
+    line-height: 1.2;
+}
+
+.admin-title p {
+    margin: 0;
+    color: #777;
+}
 
 .eyebrow {
     font-size: 11px;
-
     letter-spacing: 3px;
-
     font-weight: 700;
-
     color: #777;
 }
-
 
 .admin-header h1 {
     margin: 8px 0;
-
     font-size: 40px;
+    line-height: 1.2;
 }
-
 
 .admin-header p {
     margin: 0;
-
     color: #777;
 }
 
 
-.manage-btn {
-    background: #111;
+/* =========================
+   DASHBOARD ACTIONS
+========================= */
 
-    color: white;
+.admin-actions,
+.dashboard-actions {
+    display: flex;
+    flex: 0 1 auto;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+}
 
-    padding: 13px 20px;
-
-    border-radius: 8px;
-
-    text-decoration: none;
-
+.admin-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 16px;
+    border: 1px solid #171717;
+    border-radius: 7px;
+    background: #171717;
+    color: #fff !important;
+    font-size: 13px;
     font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
 
-    transition: 0.3s;
+.admin-action-btn:hover,
+.admin-action-btn:focus-visible {
+    background: #3a3a3a;
+    border-color: #3a3a3a;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.admin-action-btn:focus-visible,
+.add-small-btn:focus-visible,
+.dashboard-btn:focus-visible,
+.manage-btn:focus-visible,
+.quick-view-btn:focus-visible,
+.edit-btn:focus-visible,
+.delete-product-btn:focus-visible,
+.delete-category-btn:focus-visible,
+.view-btn:focus-visible,
+.pagination button:focus-visible,
+.sort-btn:focus-visible {
+    outline: 3px solid #75a7ff;
+    outline-offset: 2px;
+}
+
+.dashboard-btn,
+.manage-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 18px;
+    background: #111;
+    color: #fff !important;
+    text-decoration: none !important;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #111;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.dashboard-btn:hover,
+.manage-btn:hover {
+    background: #333;
+    color: #fff !important;
+    transform: translateY(-2px);
 }
 
 
-.manage-btn:hover {
-    background: #333;
+/* =========================
+   GLOBAL SEARCH
+========================= */
+
+.global-search {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 25px;
+    box-sizing: border-box;
+}
+
+.global-search input {
+    width: 100%;
+    max-width: 500px;
+    padding: 13px 16px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    background: #fff;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.global-search input:focus {
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 
 
@@ -398,68 +1185,46 @@
 ========================= */
 
 .stats-grid {
+    width: 100%;
     max-width: 1200px;
-
-    margin: auto;
-
+    margin: 0 auto 25px;
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 18px;
-
-    margin-bottom: 25px;
+    box-sizing: border-box;
 }
-
 
 .stat-card {
-    background: white;
-
+    min-width: 0;
+    background: #fff;
     border-radius: 15px;
-
     padding: 24px;
-
     display: flex;
-
     align-items: center;
-
     gap: 17px;
-
-    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
 }
-
 
 .stat-icon {
     width: 48px;
-
     height: 48px;
-
-    border-radius: 12px;
-
-    background: #f3f3f3;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 21px;
-
     flex-shrink: 0;
+    border-radius: 12px;
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
 }
-
 
 .stat-card span {
     color: #888;
-
     font-size: 13px;
 }
 
-
 .stat-card h2 {
     margin: 5px 0 0;
-
     font-size: 25px;
 }
 
@@ -469,30 +1234,25 @@
 ========================= */
 
 .dashboard-grid {
+    width: 100%;
     max-width: 1200px;
-
-    margin: auto;
-
+    margin: 0 auto 25px;
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 20px;
-
-    margin-bottom: 25px;
+    box-sizing: border-box;
 }
-
 
 .status-card,
 .low-stock-card,
-.recent-orders {
-    background: white;
-
+.recent-orders,
+.products-management,
+.categories-management {
+    background: #fff;
     border-radius: 15px;
-
     padding: 25px;
-
-    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
 }
 
 
@@ -502,38 +1262,27 @@
 
 .section-heading {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
+    gap: 15px;
     margin-bottom: 22px;
 }
 
-
 .section-heading h2 {
     margin: 0;
-
     font-size: 21px;
 }
 
-
 .section-heading p {
     margin: 5px 0 0;
-
     color: #888;
-
     font-size: 13px;
 }
 
-
 .section-heading a {
     color: #111;
-
     text-decoration: none;
-
     font-size: 13px;
-
     font-weight: 600;
 }
 
@@ -544,50 +1293,38 @@
 
 .status-grid {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 12px;
 }
 
-
 .status-box {
     padding: 18px;
-
     border-radius: 11px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
+    gap: 10px;
 }
-
 
 .status-box span {
     font-size: 13px;
 }
 
-
 .status-box strong {
     font-size: 22px;
 }
-
 
 .pending-box {
     background: #fff7df;
 }
 
-
 .confirmed-box {
     background: #e8f0ff;
 }
 
-
 .shipped-box {
     background: #f0eaff;
 }
-
 
 .delivered-box {
     background: #e6f7eb;
@@ -600,221 +1337,449 @@
 
 .stock-list {
     display: flex;
-
     flex-direction: column;
-
     gap: 10px;
 }
 
-
 .stock-item {
+    width: 100%;
     padding: 13px;
-
     border: 1px solid #eee;
-
     border-radius: 9px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 15px;
+    box-sizing: border-box;
 }
 
-
-.stock-item div {
+.stock-product-info {
     display: flex;
-
     flex-direction: column;
-
     gap: 4px;
+    min-width: 0;
 }
 
-
-.stock-item strong {
+.stock-product-info strong {
     font-size: 14px;
+    word-break: break-word;
 }
 
-
-.stock-item span {
+.stock-product-info span {
     color: #888;
-
     font-size: 11px;
 }
 
+.stock-item-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
 
 .stock-count {
     color: #c62828 !important;
-
     font-weight: 700;
-
     white-space: nowrap;
 }
 
+.quick-view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    background: #f5f5f5;
+    color: #222 !important;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none !important;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.quick-view-btn:hover {
+    background: #111;
+    color: #fff !important;
+    border-color: #111;
+}
 
 .no-stock-warning {
     padding: 20px;
-
     border-radius: 10px;
-
     background: #eef8f0;
-
     color: #26733a;
-
     font-size: 13px;
 }
 
 
 /* =========================
-   TABLE
+   MANAGEMENT
 ========================= */
 
+.products-management,
+.categories-management,
 .recent-orders {
+    width: 100%;
     max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+}
 
-    margin: 0 auto;
+.add-small-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 15px;
+    background: #111 !important;
+    color: #fff !important;
+    border-radius: 7px;
+    text-decoration: none !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    min-height: 40px;
+    padding: 10px 14px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-small-btn:hover {
+    background: #3a3a3a !important;
+    transform: translateY(-1px);
 }
 
 
+/* =========================
+   SEARCH & FILTERS
+========================= */
+
+.management-filters {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 42px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 13px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+}
+
+.filter-box {
+    min-width: 170px;
+}
+
+.filter-box select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   TABLES
+========================= */
+
+.products-table-wrapper,
+.categories-table-wrapper,
 .orders-table-wrapper {
+    width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-
+.products-table,
+.categories-table,
 .orders-table {
     width: 100%;
-
     border-collapse: collapse;
+}
 
+.products-table {
+    min-width: 750px;
+}
+
+.categories-table {
+    min-width: 750px;
+}
+
+.orders-table {
     min-width: 700px;
 }
 
-
+.products-table th,
+.categories-table th,
 .orders-table th {
     text-align: left;
-
     padding: 14px 12px;
-
     color: #888;
-
     font-size: 11px;
-
     text-transform: uppercase;
-
     letter-spacing: 1px;
-
     border-bottom: 1px solid #eee;
 }
 
+.products-table td,
+.categories-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    vertical-align: middle;
+}
 
 .orders-table td {
     padding: 17px 12px;
-
     border-bottom: 1px solid #eee;
-
     font-size: 14px;
 }
 
 
-.orders-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-
 /* =========================
-   STATUS BADGES
+   PRODUCT IMAGE
 ========================= */
 
-.table-status {
-    display: inline-block;
-
-    padding: 6px 10px;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    font-weight: 700;
+.product-thumb,
+.no-image {
+    width: 55px;
+    height: 55px;
+    border-radius: 8px;
 }
 
-
-.table-status.pending {
-    background: #fff3cd;
-
-    color: #856404;
+.product-thumb {
+    object-fit: cover;
+    border: 1px solid #eee;
 }
 
-
-.table-status.confirmed {
-    background: #dbeafe;
-
-    color: #1e40af;
-}
-
-
-.table-status.shipped {
-    background: #ede9fe;
-
-    color: #6d28d9;
-}
-
-
-.table-status.delivered {
-    background: #dcfce7;
-
-    color: #166534;
-}
-
-
-.table-status.cancelled {
-    background: #fee2e2;
-
-    color: #991b1b;
-}
-
-
-/* =========================
-   VIEW BUTTON
-========================= */
-
-.view-btn {
-    padding: 7px 12px;
-
-    background: #111;
-
-    color: white;
-
-    border-radius: 6px;
-
-    text-decoration: none;
-
-    font-size: 11px;
-
-    font-weight: 600;
-}
-
-
-.view-btn:hover {
-    background: #333;
-}
-
-
-.empty-orders {
-    padding: 30px;
-
-    text-align: center;
-
+.no-image {
+    background: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
     color: #888;
 }
 
 
 /* =========================
-   RESPONSIVE
+   STOCK BADGES
 ========================= */
 
-@media (max-width: 1000px) {
+.stock-good,
+.stock-low,
+.product-count,
+.table-status {
+    display: inline-block;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.stock-good {
+    padding: 6px 10px;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.stock-low {
+    padding: 6px 10px;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.product-count {
+    min-width: 30px;
+    padding: 6px 10px;
+    text-align: center;
+    background: #f3f3f3;
+    color: #111;
+}
+
+
+/* =========================
+   ACTIONS
+========================= */
+
+.product-actions,
+.category-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.edit-btn,
+.delete-product-btn,
+.delete-category-btn,
+.view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none !important;
+    box-sizing: border-box;
+}
+
+.edit-btn,
+.view-btn {
+    background: #111;
+    color: #fff !important;
+}
+
+.delete-product-btn,
+.delete-category-btn {
+    background: #fee2e2;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca;
+}
+
+.edit-btn:hover,
+.view-btn:hover {
+    background: #333;
+}
+
+.delete-product-btn:hover,
+.delete-category-btn:hover {
+    background: #dc2626;
+    color: #fff !important;
+}
+
+
+/* =========================
+   PAGINATION
+========================= */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px 0;
+}
+
+.pagination button {
+    padding: 9px 16px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #222;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sort-btn {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    padding: 0;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    background: #fff;
+    color: #444;
+    font-size: 16px;
+    line-height: 1;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.sort-btn:hover {
+    border-color: #171717;
+    background: #171717;
+    color: #fff;
+}
+
+.pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+#productPageInfo,
+#categoryPageInfo {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+}
+
+
+/* =========================
+   EMPTY STATES
+========================= */
+
+.empty-products,
+.empty-categories,
+.empty-orders {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1100px) {
+
+    .admin-page {
+        padding: 50px 4%;
+    }
+
+    .admin-top-section,
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -823,56 +1788,1207 @@
 }
 
 
+/* =========================
+   TABLET / SMALL LAPTOP
+========================= */
+
 @media (max-width: 800px) {
+
+    .admin-page {
+        padding: 40px 25px;
+    }
 
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
 
+    .admin-title h1,
+    .admin-header h1 {
+        font-size: 34px;
+    }
+
 }
 
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 600px) {
 
     .admin-page {
-        padding: 40px 20px;
+        padding: 30px 15px;
     }
 
+    /* HEADER */
 
+    .admin-top-section,
     .admin-header {
-        flex-direction: column;
-
-        align-items: flex-start;
+        width: 100%;
+        margin-bottom: 25px;
+        gap: 16px;
     }
 
-
+    .admin-title h1,
     .admin-header h1 {
-        font-size: 32px;
+        font-size: 28px;
+        line-height: 1.2;
     }
 
+    .admin-title p,
+    .admin-header p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
 
+    .eyebrow {
+        font-size: 9px;
+        letter-spacing: 2px;
+    }
+
+    /* BUTTONS */
+
+    .admin-actions,
+    .dashboard-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .admin-action-btn {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .dashboard-btn,
     .manage-btn {
         width: 100%;
-
+        min-height: 44px;
         text-align: center;
-
-        box-sizing: border-box;
     }
 
+    /* SEARCH */
+
+    .global-search {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .global-search input {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* STATS */
 
     .stats-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
+    .stat-card {
+        width: 100%;
+        padding: 18px;
+    }
+
+    .stat-card h2 {
+        font-size: 22px;
+    }
+
+    /* DASHBOARD */
+
+    .dashboard-grid {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
 
     .status-card,
     .low-stock-card,
+    .products-management,
+    .categories-management,
     .recent-orders {
-        padding: 20px;
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+    /* HEADINGS */
+
+    .section-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* STATUS */
+
+    .status-grid {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .status-box {
+        padding: 15px;
+    }
+
+    /* LOW STOCK */
+
+    .stock-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .stock-product-info {
+        width: 100%;
+    }
+
+    .stock-item-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* FILTERS */
+
+    .management-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 9px;
+    }
+
+    .search-box,
+    .filter-box {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* TABLE SCROLL */
+
+    .products-table-wrapper,
+    .categories-table-wrapper,
+    .orders-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* PAGINATION */
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+}
+
+
+/* =========================
+   SMALL PHONES
+========================= */
+
+@media (max-width: 400px) {
+
+    .admin-page {
+        padding: 25px 10px;
+    }
+
+    .admin-title h1,
+    .admin-header h1 {
+        font-size: 24px;
+    }
+
+    .admin-title p,
+    .admin-header p {
+        font-size: 12px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .status-card,
+    .low-stock-card,
+    .products-management,
+    .categories-management,
+    .recent-orders {
+        padding: 15px;
+    }
+
+    .pagination {
+        flex-direction: column;
+    }
+
+    .pagination button {
+        width: 100%;
     }
 
 }
 
 </style>
-
 {% endblock %}
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+{% block extra_js %}
+
+<script>
+function globalDashboardSearch() {
+
+    const input = document.getElementById("globalSearch");
+
+    if (!input) return;
+
+    const searchValue = input.value.toLowerCase().trim();
+
+    /*
+        PRODUCT TABLE
+    */
+    const productRows = document.querySelectorAll(
+        ".products-table tbody tr"
+    );
+
+    productRows.forEach(function(row) {
+
+        const rowText = row.innerText.toLowerCase();
+
+        if (rowText.includes(searchValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+
+    /*
+        CATEGORY TABLE
+    */
+    const categoryRows = document.querySelectorAll(
+        ".categories-table tbody tr"
+    );
+
+    categoryRows.forEach(function(row) {
+
+        const rowText = row.innerText.toLowerCase();
+
+        if (rowText.includes(searchValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+
+    /*
+        RECENT ORDERS
+    */
+    const orderRows = document.querySelectorAll(
+        ".orders-table tbody tr"
+    );
+
+    orderRows.forEach(function(row) {
+
+        const rowText = row.innerText.toLowerCase();
+
+        if (rowText.includes(searchValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+}
+/* =====================================================
+   PRODUCT SEARCH + FILTER + SORT + PAGINATION
+===================================================== */
+
+
+const productsPerPage = 5;
+
+let currentProductPage = 1;
+
+let productSortColumn = null;
+
+let productSortAscending = true;
+
+
+/* =====================================================
+   GET ALL PRODUCT ROWS
+===================================================== */
+
+function getProductRows() {
+
+    const table =
+        document.querySelector(".products-table");
+
+    if (!table) {
+        return [];
+    }
+
+    const tbody =
+        table.querySelector("tbody");
+
+    if (!tbody) {
+        return [];
+    }
+
+    return Array.from(
+        tbody.querySelectorAll("tr")
+    );
+}
+
+
+/* =====================================================
+   APPLY PRODUCT VIEW
+===================================================== */
+
+function applyProductView(resetPage = false) {
+
+    const table =
+        document.querySelector(".products-table");
+
+    if (!table) {
+        return;
+    }
+
+
+    const tbody =
+        table.querySelector("tbody");
+
+
+    let allRows =
+        getProductRows();
+
+
+    /* Reset page */
+
+    if (resetPage) {
+        currentProductPage = 1;
+    }
+
+
+    /* =================================================
+       SORT PRODUCTS
+    ================================================= */
+
+    if (productSortColumn !== null) {
+
+        allRows.sort(function(a, b) {
+
+            let valueA =
+                a.cells[productSortColumn]
+                    .innerText
+                    .trim()
+                    .toLowerCase();
+
+
+            let valueB =
+                b.cells[productSortColumn]
+                    .innerText
+                    .trim()
+                    .toLowerCase();
+
+
+            /* Price sorting */
+
+            if (productSortColumn === 3) {
+
+                valueA =
+                    parseFloat(
+                        valueA
+                            .replace("₹", "")
+                            .replace(/,/g, "")
+                    ) || 0;
+
+
+                valueB =
+                    parseFloat(
+                        valueB
+                            .replace("₹", "")
+                            .replace(/,/g, "")
+                    ) || 0;
+
+            }
+
+
+            /* Stock sorting */
+
+            if (productSortColumn === 4) {
+
+                valueA =
+                    parseInt(valueA) || 0;
+
+                valueB =
+                    parseInt(valueB) || 0;
+
+            }
+
+
+            /* Compare */
+
+            if (valueA < valueB) {
+
+                return productSortAscending
+                    ? -1
+                    : 1;
+
+            }
+
+
+            if (valueA > valueB) {
+
+                return productSortAscending
+                    ? 1
+                    : -1;
+
+            }
+
+
+            return 0;
+
+        });
+
+
+        /* Reorder table */
+
+        allRows.forEach(function(row) {
+
+            tbody.appendChild(row);
+
+        });
+
+    }
+
+
+    /* =================================================
+       SEARCH VALUES
+    ================================================= */
+
+    const searchInput =
+        document.getElementById(
+            "productSearch"
+        );
+
+
+    const categoryFilter =
+        document.getElementById(
+            "productCategoryFilter"
+        );
+
+
+    const stockFilter =
+        document.getElementById(
+            "productStockFilter"
+        );
+
+
+    const searchValue =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
+
+
+    const categoryValue =
+        categoryFilter
+            ? categoryFilter.value
+                .toLowerCase()
+            : "";
+
+
+    const stockValue =
+        stockFilter
+            ? stockFilter.value
+            : "";
+
+
+    /* =================================================
+       FILTER PRODUCTS
+    ================================================= */
+
+    let matchingRows = [];
+
+
+    allRows.forEach(function(row) {
+
+        const productName =
+            row.cells[1]
+                .innerText
+                .toLowerCase();
+
+
+        const categoryName =
+            row.cells[2]
+                .innerText
+                .toLowerCase();
+
+
+        const stock =
+            parseInt(
+                row.cells[4]
+                    .innerText
+                    .trim()
+            ) || 0;
+
+
+        /* Search */
+
+        const matchesSearch =
+            productName.includes(
+                searchValue
+            );
+
+
+        /* Category */
+
+        const matchesCategory =
+            !categoryValue ||
+            categoryName === categoryValue;
+
+
+        /* Stock */
+
+        let matchesStock = true;
+
+
+        if (stockValue === "low") {
+
+            matchesStock =
+                stock > 0 &&
+                stock <= 5;
+
+        }
+
+
+        else if (stockValue === "available") {
+
+            matchesStock =
+                stock > 5;
+
+        }
+
+
+        else if (stockValue === "out") {
+
+            matchesStock =
+                stock === 0;
+
+        }
+
+
+        /* Final match */
+
+        if (
+            matchesSearch &&
+            matchesCategory &&
+            matchesStock
+        ) {
+
+            matchingRows.push(row);
+
+        }
+
+    });
+
+
+    /* =================================================
+       HIDE ALL PRODUCTS
+    ================================================= */
+
+    allRows.forEach(function(row) {
+
+        row.style.display = "none";
+
+    });
+
+
+    /* =================================================
+       PAGINATION
+    ================================================= */
+
+    const totalPages =
+        Math.max(
+            1,
+            Math.ceil(
+                matchingRows.length /
+                productsPerPage
+            )
+        );
+
+
+    /* Keep page valid */
+
+    if (
+        currentProductPage >
+        totalPages
+    ) {
+
+        currentProductPage =
+            totalPages;
+
+    }
+
+
+    if (
+        currentProductPage < 1
+    ) {
+
+        currentProductPage = 1;
+
+    }
+
+
+    const start =
+        (currentProductPage - 1) *
+        productsPerPage;
+
+
+    const end =
+        start +
+        productsPerPage;
+
+
+    const pageRows =
+        matchingRows.slice(
+            start,
+            end
+        );
+
+
+    /* =================================================
+       SHOW CURRENT PAGE
+    ================================================= */
+
+    pageRows.forEach(function(row) {
+
+        row.style.display = "";
+
+    });
+
+
+    /* =================================================
+       PAGINATION INFO
+    ================================================= */
+
+    const pageInfo =
+        document.getElementById(
+            "productPageInfo"
+        );
+
+
+    const prevBtn =
+        document.getElementById(
+            "productPrevBtn"
+        );
+
+
+    const nextBtn =
+        document.getElementById(
+            "productNextBtn"
+        );
+
+
+    if (pageInfo) {
+
+        pageInfo.innerText =
+            "Page " +
+            currentProductPage +
+            " of " +
+            totalPages;
+
+    }
+
+
+    if (prevBtn) {
+
+        prevBtn.disabled =
+            currentProductPage === 1;
+
+    }
+
+
+    if (nextBtn) {
+
+        nextBtn.disabled =
+            currentProductPage === totalPages;
+
+    }
+
+}
+
+
+/* =====================================================
+   PRODUCT SEARCH + FILTER
+===================================================== */
+
+function filterProducts() {
+
+    applyProductView(true);
+
+}
+
+
+/* =====================================================
+   PRODUCT SORT
+===================================================== */
+
+function sortProducts(columnIndex) {
+
+    if (
+        productSortColumn ===
+        columnIndex
+    ) {
+
+        productSortAscending =
+            !productSortAscending;
+
+    }
+
+    else {
+
+        productSortColumn =
+            columnIndex;
+
+        productSortAscending =
+            true;
+
+    }
+
+
+    applyProductView(false);
+
+}
+
+
+/* =====================================================
+   CHANGE PRODUCT PAGE
+===================================================== */
+
+function changeProductPage(direction) {
+
+    currentProductPage += direction;
+
+    applyProductView(false);
+
+}
+
+
+/* =====================================================
+   CATEGORY SEARCH + FILTER
+===================================================== */
+
+const categoriesPerPage = 5;
+
+let currentCategoryPage = 1;
+
+let categorySortColumn = null;
+
+let categorySortAscending = true;
+
+
+function getCategoryRows() {
+
+    const table =
+        document.querySelector(".categories-table");
+
+    if (!table) {
+        return [];
+    }
+
+    const tbody = table.querySelector("tbody");
+
+    if (!tbody) {
+        return [];
+    }
+
+    return Array.from(
+        tbody.querySelectorAll("tr")
+    );
+}
+
+
+function applyCategoryView(resetPage = false) {
+
+    const table =
+        document.querySelector(".categories-table");
+
+    if (!table) {
+        return;
+    }
+
+    const tbody =
+        table.querySelector("tbody");
+
+    let allRows =
+        getCategoryRows();
+
+
+    if (resetPage) {
+        currentCategoryPage = 1;
+    }
+
+
+    /* =========================
+       SORT
+    ========================= */
+
+    if (categorySortColumn !== null) {
+
+        allRows.sort(function(a, b) {
+
+            let valueA =
+                a.cells[categorySortColumn]
+                    .innerText
+                    .trim()
+                    .toLowerCase();
+
+            let valueB =
+                b.cells[categorySortColumn]
+                    .innerText
+                    .trim()
+                    .toLowerCase();
+
+
+            /* Product count */
+
+            if (categorySortColumn === 3) {
+
+                valueA =
+                    parseInt(valueA) || 0;
+
+                valueB =
+                    parseInt(valueB) || 0;
+            }
+
+
+            if (valueA < valueB) {
+
+                return categorySortAscending
+                    ? -1
+                    : 1;
+            }
+
+
+            if (valueA > valueB) {
+
+                return categorySortAscending
+                    ? 1
+                    : -1;
+            }
+
+
+            return 0;
+
+        });
+
+
+        /* Reorder rows */
+
+        allRows.forEach(function(row) {
+
+            tbody.appendChild(row);
+
+        });
+
+    }
+
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    const searchInput =
+        document.getElementById(
+            "categorySearch"
+        );
+
+
+    const productFilter =
+        document.getElementById(
+            "categoryProductFilter"
+        );
+
+
+    const searchValue =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
+
+
+    const filterValue =
+        productFilter
+            ? productFilter.value
+            : "";
+
+
+    let matchingRows = [];
+
+
+    /* =========================
+       FILTER
+    ========================= */
+
+    allRows.forEach(function(row) {
+
+        const categoryName =
+            row.cells[1]
+                .innerText
+                .toLowerCase();
+
+
+        const productCount =
+            parseInt(
+                row.cells[3]
+                    .innerText
+                    .trim()
+            ) || 0;
+
+
+        const matchesSearch =
+            categoryName.includes(
+                searchValue
+            );
+
+
+        let matchesFilter = true;
+
+
+        if (
+            filterValue ===
+            "with-products"
+        ) {
+
+            matchesFilter =
+                productCount > 0;
+
+        }
+
+
+        else if (
+            filterValue ===
+            "empty"
+        ) {
+
+            matchesFilter =
+                productCount === 0;
+
+        }
+
+
+        if (
+            matchesSearch &&
+            matchesFilter
+        ) {
+
+            matchingRows.push(row);
+
+        }
+
+    });
+
+
+    /* =========================
+       HIDE ALL ROWS
+    ========================= */
+
+    allRows.forEach(function(row) {
+
+        row.style.display = "none";
+
+    });
+
+
+    /* =========================
+       PAGINATION
+    ========================= */
+
+    const totalPages =
+        Math.max(
+            1,
+            Math.ceil(
+                matchingRows.length /
+                categoriesPerPage
+            )
+        );
+
+
+    if (
+        currentCategoryPage >
+        totalPages
+    ) {
+
+        currentCategoryPage =
+            totalPages;
+
+    }
+
+
+    if (
+        currentCategoryPage < 1
+    ) {
+
+        currentCategoryPage = 1;
+
+    }
+
+
+    const start =
+        (currentCategoryPage - 1) *
+        categoriesPerPage;
+
+
+    const end =
+        start +
+        categoriesPerPage;
+
+
+    const pageRows =
+        matchingRows.slice(
+            start,
+            end
+        );
+
+
+    /* =========================
+       SHOW CURRENT PAGE
+    ========================= */
+
+    pageRows.forEach(function(row) {
+
+        row.style.display = "";
+
+    });
+
+
+    /* =========================
+       PAGINATION UI
+    ========================= */
+
+    const pageInfo =
+        document.getElementById(
+            "categoryPageInfo"
+        );
+
+
+    const prevBtn =
+        document.getElementById(
+            "categoryPrevBtn"
+        );
+
+
+    const nextBtn =
+        document.getElementById(
+            "categoryNextBtn"
+        );
+
+
+    if (pageInfo) {
+
+        pageInfo.innerText =
+            "Page " +
+            currentCategoryPage +
+            " of " +
+            totalPages;
+
+    }
+
+
+    if (prevBtn) {
+
+        prevBtn.disabled =
+            currentCategoryPage === 1;
+
+    }
+
+
+    if (nextBtn) {
+
+        nextBtn.disabled =
+            currentCategoryPage ===
+            totalPages;
+
+    }
+
+}
+
+
+/* =========================
+   CATEGORY SEARCH / FILTER
+========================= */
+
+function filterCategories() {
+
+    applyCategoryView(true);
+
+}
+
+
+/* =========================
+   CATEGORY SORT
+========================= */
+
+function sortCategories(columnIndex) {
+
+    if (
+        categorySortColumn ===
+        columnIndex
+    ) {
+
+        categorySortAscending =
+            !categorySortAscending;
+
+    }
+
+    else {
+
+        categorySortColumn =
+            columnIndex;
+
+        categorySortAscending =
+            true;
+
+    }
+
+
+    applyCategoryView(false);
+
+}
+
+
+/* =========================
+   CATEGORY PAGINATION
+========================= */
+
+function changeCategoryPage(direction) {
+
+    currentCategoryPage +=
+        direction;
+
+    applyCategoryView(false);
+
+}
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        applyProductView(false);
+
+        applyCategoryView(false);
+
+    }
+);
+
+</script>
+
+{% endblock %}  
