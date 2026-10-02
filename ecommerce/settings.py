@@ -24,18 +24,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
 
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-local-development-key"
+SECRET_KEY = (
+    os.environ.get("DJANGO_SECRET_KEY")
+    or os.environ.get("SECRET_KEY")
+    or "django-insecure-local-development-key"
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 
+if not DEBUG and (
+    not SECRET_KEY.strip()
+    or SECRET_KEY == "django-insecure-local-development-key"
+):
+    raise ValueError(
+        "Set a private DJANGO_SECRET_KEY (or SECRET_KEY) environment variable "
+        "before running with DJANGO_DEBUG=false."
+    )
+
 ALLOWED_HOSTS = [
     "shopease-hhz1.onrender.com",
     "localhost",
     "127.0.0.1",
+]
+for vercel_host in (
+    os.environ.get("VERCEL_URL"),
+    os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
+):
+    if vercel_host:
+        ALLOWED_HOSTS.append(vercel_host)
+
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host}"
+    for host in (
+        os.environ.get("VERCEL_URL"),
+        os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
+    )
+    if host
 ]
 
 # Application definition
@@ -112,7 +137,7 @@ else:
             "ENGINE": "django.db.backends.mysql",
             "NAME": "ecommerce_db",
             "USER": "root",
-            "PASSWORD": "2385",
+            "PASSWORD": os.environ.get("MYSQLPASSWORD", ""),
             "HOST": "localhost",
             "PORT": "3306",
         }
