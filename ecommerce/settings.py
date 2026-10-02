@@ -89,7 +89,6 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 import os
 
 if os.environ.get("MYSQLHOST"):
-    # Render / Aiven
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
