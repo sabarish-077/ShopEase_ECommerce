@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,21 +48,29 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
 ]
-for vercel_host in (
+for deployment_host in (
+    os.environ.get("RENDER_EXTERNAL_HOSTNAME"),
     os.environ.get("VERCEL_URL"),
     os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
 ):
-    if vercel_host:
-        ALLOWED_HOSTS.append(vercel_host)
+    if deployment_host:
+        ALLOWED_HOSTS.append(deployment_host)
 
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host}"
     for host in (
+        os.environ.get("RENDER_EXTERNAL_HOSTNAME"),
         os.environ.get("VERCEL_URL"),
         os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
     )
     if host
 ]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # Application definition
 
@@ -113,7 +122,15 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 import os
 
-if os.environ.get("MYSQLHOST"):
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        "default": dj_database_url.parse(
+            os.environ["DATABASE_URL"],
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
+elif os.environ.get("MYSQLHOST"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
