@@ -136,6 +136,18 @@
 
     </div>
 
+    {% if products.has_other_pages %}
+    <nav class="product-pagination" aria-label="Product pages">
+        {% if products.has_previous %}
+        <a href="?{{ query_string }}{% if query_string %}&amp;{% endif %}page={{ products.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span>Page {{ products.number }} of {{ products.paginator.num_pages }}</span>
+        {% if products.has_next %}
+        <a href="?{{ query_string }}{% if query_string %}&amp;{% endif %}page={{ products.next_page_number }}">Next</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+
 </section>
 
 {% endblock %}
@@ -217,6 +229,19 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
+}
+
+.product-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 36px;
+}
+
+.product-pagination a {
+    color: #111;
+    font-weight: 600;
 }
 
 .product-card {

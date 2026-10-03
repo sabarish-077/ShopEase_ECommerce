@@ -16,6 +16,8 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import user_passes_test
+from django.core.paginator import Paginator
+from django.db.models import Sum
 
 
 def home(request):
@@ -33,7 +35,7 @@ def home(request):
 
 
 def products(request):
-    products = Product.objects.all()
+    products = Product.objects.select_related("category").order_by("id")
     categories = Category.objects.all()
 
     search = request.GET.get("search", "").strip()
@@ -45,6 +47,11 @@ def products(request):
     if category_id:
         products = products.filter(category_id=category_id)
 
+    query_params = request.GET.copy()
+    query_params.pop("page", None)
+    query_string = query_params.urlencode()
+    products = Paginator(products, 12).get_page(request.GET.get("page"))
+
     return render(
         request,
         "products.html",
@@ -52,6 +59,7 @@ def products(request):
             "products": products,
             "categories": categories,
             "search": search,
+            "query_string": query_string,
         }
     )
 
@@ -378,11 +386,10 @@ def admin_dashboard(request):
     total_products = Product.objects.count()
     products = Product.objects.all()
 
-    total_sales = sum(
-        order.total_amount
-        for order in Order.objects.exclude(
-            status="Cancelled"
-        )
+    total_sales = (
+        Order.objects.exclude(status="Cancelled")
+        .aggregate(total=Sum("total_amount"))["total"]
+        or 0
     )
 
     pending_orders = Order.objects.filter(
