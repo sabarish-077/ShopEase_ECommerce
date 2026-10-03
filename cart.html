@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Review your ShopEase shopping cart.">
+  <title>Your Cart | ShopEase</title>
+  <link rel="stylesheet" href="static/css/github-store.css">
+  <script src="static/js/pages-store.js" defer></script>
+</head>
+<body>
+  <div class="announcement">A browser-only preview · No payment or order processing</div>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Ease</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="products.html">Shop</a>
+      <a class="cart-nav" href="cart.html" aria-current="page">Cart <span class="cart-count" data-cart-count>0</span></a>
+    </nav>
+  </header>
+  <main class="cart-page">
+    <p class="eyebrow">Your selection</p>
+    <h1 class="cart-title">Shopping cart</h1>
+    <div class="cart-layout">
+      <section aria-label="Cart items" data-cart-items></section>
+      <aside class="cart-summary">
+        <h2>Order summary</h2>
+        <div class="summary-row"><span>Items</span><span data-cart-summary-count>0 items</span></div>
+        <div class="summary-row"><span>Delivery</span><span>Not calculated</span></div>
+        <div class="summary-total"><span>Subtotal</span><span data-cart-total>₹0</span></div>
+        <button class="primary-button" type="button" disabled>Checkout unavailable</button>
+        <p class="static-checkout-note">This GitHub Pages preview has no order server or payment processing. Your cart is saved only in this browser.</p>
+      </aside>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <span>ShopEase static storefront preview</span>
+    <a href="products.html">Continue shopping</a>
+  </footer>
+</body>
+</html>

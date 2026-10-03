@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Browse the ShopEase clothing collection.">
+  <title>Shop Products | ShopEase</title>
+  <link rel="stylesheet" href="static/css/github-store.css">
+  <script src="static/js/pages-store.js" defer></script>
+</head>
+<body>
+  <div class="announcement">A browser-only preview · No payment or order processing</div>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Ease</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="products.html" aria-current="page">Shop</a>
+      <a class="cart-nav" href="cart.html">Cart <span class="cart-count" data-cart-count>0</span></a>
+    </nav>
+  </header>
+  <main class="section-wrap">
+    <section class="page-heading">
+      <p class="eyebrow">The collection</p>
+      <h1 class="catalog-title">Find your next favorite.</h1>
+      <p>Browse the pieces, open a product for details, and add your picks to a cart saved in this browser.</p>
+    </section>
+    <div class="catalog-controls">
+      <div class="catalog-fields">
+        <input type="search" aria-label="Search products" placeholder="Search the collection" data-product-search>
+        <select aria-label="Filter by category" data-product-category>
+          <option value="">All categories</option>
+          <option value="Women">Women</option>
+          <option value="Men">Men</option>
+          <option value="Ethnic">Ethnic</option>
+        </select>
+      </div>
+      <span class="results-count" data-results-count></span>
+    </div>
+    <section class="product-grid catalog-grid" aria-label="Products" data-product-grid></section>
+  </main>
+  <footer class="site-footer">
+    <span>ShopEase static storefront preview</span>
+    <a href="index.html">Back to home</a>
+  </footer>
+</body>
+</html>
